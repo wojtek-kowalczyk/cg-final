@@ -85,7 +85,7 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\;src;</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -183,8 +183,14 @@
     <ClCompile Include="lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
     <ClCompile Include="lib\stb_image\stb_image.cpp" />
+    <ClCompile Include="src\core\indexBuffer.cpp" />
+    <ClCompile Include="src\core\log.cpp" />
+    <ClCompile Include="src\core\renderer.cpp" />
+    <ClCompile Include="src\core\shader.cpp" />
+    <ClCompile Include="src\core\texture.cpp" />
+    <ClCompile Include="src\core\vertexArray.cpp" />
+    <ClCompile Include="src\core\vertexBuffer.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\Source.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\glad\glad.h" />
@@ -483,6 +489,15 @@
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="lib\KHR\khrplatform.h" />
     <ClInclude Include="lib\stb_image\stb_image.h" />
+    <ClInclude Include="src\consts.h" />
+    <ClInclude Include="src\core\indexBuffer.h" />
+    <ClInclude Include="src\core\log.h" />
+    <ClInclude Include="src\core\renderer.h" />
+    <ClInclude Include="src\core\scene.h" />
+    <ClInclude Include="src\core\shader.h" />
+    <ClInclude Include="src\core\texture.h" />
+    <ClInclude Include="src\core\vertexArray.h" />
+    <ClInclude Include="src\core\vertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\glm\detail\func_common.inl" />
