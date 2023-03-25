@@ -29,9 +29,9 @@ public:
 
 	void Bind() const;
 	void Unbind() const;
-	unsigned int GetCount() const { return m_count; }
+	unsigned int GetSize() const { return m_size; }
 
 private:
-	unsigned int m_rendererId;
-	unsigned int m_count;
+	unsigned int m_id;
+	unsigned int m_size;
 };

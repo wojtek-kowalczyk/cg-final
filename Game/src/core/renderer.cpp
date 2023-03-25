@@ -17,7 +17,7 @@ void Renderer::Draw(const VertexBuffer& vb, const Shader& shader) const
 {
 	vb.Bind();
 	shader.use();
-	glDrawArrays(m_mode, 0, vb.GetCount());
+	glDrawArrays(m_mode, 0, vb.GetSize());
 }
 
 void Renderer::Clear(const glm::vec4& color) const

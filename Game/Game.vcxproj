@@ -636,6 +636,8 @@
     <None Include="lib\glm\gtx\vector_angle.inl" />
     <None Include="lib\glm\gtx\vector_query.inl" />
     <None Include="lib\glm\gtx\wrap.inl" />
+    <None Include="res\frag.glsl" />
+    <None Include="res\vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
