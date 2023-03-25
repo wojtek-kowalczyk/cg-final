@@ -7,6 +7,7 @@
 #include "core/vertexBuffer.h"
 #include "core/indexBuffer.h"
 #include "core/renderer.h"
+#include "core/camera.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -24,10 +25,20 @@ static void onWindowResized(GLFWwindow* window, int width, int height);
 static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 static bool initWindow(GLFWwindow** window);
 static void initImGui(GLFWwindow* window);
-static void render();
+static void update(GLFWwindow* window, float deltaTime, Camera& camera);
+static void render(const Camera& camera);
 static void imguiRender();
 static void cleanupImGui();
 static void cleanupWindow(GLFWwindow* window);
+static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+
+// timing
+float deltaTime = 0.0f;
+float lastFrame = 0.0f;
+
+// TODO : this has to be global for callbacks?
+Camera mainCamera;
 
 int main()
 {
@@ -35,9 +46,18 @@ int main()
 	initWindow(&window);
 	initImGui(window);
 
+	mainCamera.Position = glm::vec3(3.0f, 3.0f, 3.0f);
+	//mainCamera.Front = glm::vec3(0.0f, 0.0f, 0.0f) - mainCamera.Position;
+	mainCamera.LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+
     while (!glfwWindowShouldClose(window))
     {
-		render();
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		update(window, deltaTime, mainCamera);
+		render(mainCamera);
 		imguiRender();
 
         glfwSwapBuffers(window);
@@ -49,41 +69,30 @@ int main()
     return 0;
 }
 
-static void cleanupWindow(GLFWwindow* window)
+static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO : I don't want to pass camera here. It should be updated like some kind of entity?
 {
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
+
+	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Forward, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Backward, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Left, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Right, deltaTime);
 }
 
-static void cleanupImGui()
+static void render(const Camera& camera)
 {
-	ImGui_ImplOpenGL3_Shutdown();
-	ImGui_ImplGlfw_Shutdown();
-	ImGui::DestroyContext();
-}
-
-static void imguiRender()
-{
-	// Start the Dear ImGui frame
-	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
-	ImGui::NewFrame();
-
-	ImGui::Begin("hello dear imgui");
-	ImGui::Text("Some Text");
-	ImGui::End();
-
-	ImGui::Render();
-	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-}
-
-static void render()
-{
+	// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
 	Shader shader{ "res/vert.glsl", "res/frag.glsl" };
 
 	glm::mat4 model{ 1.0f };
-	glm::mat4 view = glm::lookAt(glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
-	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+	// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
+	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
+	glm::mat4 view = camera.GetViewMatrix();
 
 	shader.use();
 	shader.setMat4f("u_m", model);
@@ -141,6 +150,34 @@ static void render()
 	Renderer rend;
 	rend.Clear();
 	rend.Draw(vao, ibo, shader);
+}
+
+static void cleanupWindow(GLFWwindow* window)
+{
+	glfwDestroyWindow(window);
+	glfwTerminate();
+}
+
+static void cleanupImGui()
+{
+	ImGui_ImplOpenGL3_Shutdown();
+	ImGui_ImplGlfw_Shutdown();
+	ImGui::DestroyContext();
+}
+
+static void imguiRender()
+{
+	// Start the Dear ImGui frame
+	ImGui_ImplOpenGL3_NewFrame();
+	ImGui_ImplGlfw_NewFrame();
+	ImGui::NewFrame();
+
+	ImGui::Begin("hello dear imgui");
+	ImGui::Text("Some Text");
+	ImGui::End();
+
+	ImGui::Render();
+	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 }
 
 static void onWindowResized(GLFWwindow* window, int width, int height)
@@ -207,7 +244,6 @@ static bool initWindow(GLFWwindow** window)
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3); // opengl 4.3 for debug output
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
 	glfwWindowHint(GLFW_OPENGL_DEBUG_CONTEXT, GL_TRUE);
-
 	*window = glfwCreateWindow(Consts::SCREEN_WIDTH, Consts::SCREEN_HEIGHT, "CG Final", nullptr, nullptr);
 
 	if (*window == nullptr)
@@ -218,6 +254,14 @@ static bool initWindow(GLFWwindow** window)
 	}
 
 	glfwMakeContextCurrent(*window);
+
+	// TODO : some system where you have to click on the screen to lock mouse it and enable camera controls, press escape to unlock the cursor and disable camera controls
+	glfwSetInputMode(*window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	//glfwSetInputMode(*window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+	glfwSetWindowSizeCallback(*window, onWindowResized);
+	glfwSetCursorPosCallback(*window, mouse_callback);
+	glfwSetScrollCallback(*window, scroll_callback);
+	glfwSwapInterval(0); // disable vsync , 1 - enable (I think?)
 
 	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
 	{
@@ -234,8 +278,6 @@ static bool initWindow(GLFWwindow** window)
 	glDebugMessageControl(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, NULL, GL_TRUE);
 
 	glViewport(0, 0, Consts::SCREEN_WIDTH, Consts::SCREEN_HEIGHT);
-	glfwSetWindowSizeCallback(*window, onWindowResized);
-	glfwSwapInterval(0); // disable vsync , 1 - enable (I think?)
 
 	return true;
 }
@@ -257,4 +299,33 @@ static void initImGui(GLFWwindow* window)
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 430");
+}
+
+static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
+{
+	float xpos = static_cast<float>(xposIn);
+	float ypos = static_cast<float>(yposIn);
+
+	static bool firstMouse = true;
+	static float lastX, lastY;
+
+	if (firstMouse)
+	{
+		lastX = xpos;
+		lastY = ypos;
+		firstMouse = false;
+	}
+
+	float xoffset = xpos - lastX;
+	float yoffset = lastY - ypos; // reversed since y-coordinates go from bottom to top
+
+	lastX = xpos;
+	lastY = ypos;
+
+	mainCamera.ProcessMouseMovement(xoffset, yoffset); // how do I pass camera to this function, when I can't modify its interface?
+}
+
+void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+{
+	mainCamera.ProcessMouseScroll(static_cast<float>(yoffset));
 }
