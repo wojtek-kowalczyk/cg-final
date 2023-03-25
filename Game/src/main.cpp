@@ -11,6 +11,9 @@
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
 
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <imgui/imgui.h>
 #include <imgui/imgui_impl_glfw.h>
 #include <imgui/imgui_impl_opengl3.h>
@@ -48,7 +51,6 @@ int main()
 
 static void cleanupWindow(GLFWwindow* window)
 {
-
 	glfwDestroyWindow(window);
 	glfwTerminate();
 }
@@ -79,28 +81,62 @@ static void render()
 {
 	Shader shader{ "res/vert.glsl", "res/frag.glsl" };
 
+	glm::mat4 model{ 1.0f };
+	glm::mat4 view = glm::lookAt(glm::vec3(2.0f, 2.0f, 5.0f), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	glm::mat4 projection = glm::perspective(glm::radians(45.0f), 16.0f / 9.0f, 0.1f, 100.0f);
+
+	shader.use();
+	shader.setMat4f("u_m", model);
+	shader.setMat4f("u_v", view);
+	shader.setMat4f("u_p", projection);
+
 	float vertices[] = {
-	 -0.5f, -0.5f, 0.0f,
-	  0.5f, -0.5f, 0.0f,
-	  0.5f,  0.5f, 0.0f,
-	 -0.5f,  0.5f, 0.0f,
+		// front			// front colors
+		-1.0, -1.0, 1.0,	1.0, 1.0, 0.0,
+		1.0, -1.0, 1.0,		0.0, 1.0, 0.0,
+		1.0, 1.0, 1.0,		0.0, 0.0, 1.0,
+		-1.0, 1.0, 1.0,		1.0, 1.0, 1.0,
+		// back				// back colors
+		-1.0, -1.0, -1.0,	0.0, 1.0, 1.0,
+		1.0, -1.0, -1.0,	1.0, 0.0, 1.0,
+		1.0, 1.0, -1.0,		1.0, 0.0, 0.0,
+		-1.0, 1.0, -1.0, 	1.0, 1.0, 0.0
 	};
 
 	unsigned int indices[] = {
+		// front
 		0, 1, 2,
 		2, 3, 0,
+		// right
+		2, 1, 6,
+		6, 1, 5,
+		// back
+		6, 7, 4,
+		4, 5, 6,
+		// left
+		7, 4, 0,
+		0, 7, 3,
+		//top
+		7, 3, 2,
+		2, 6, 7,
+		//bottom
+		4, 0, 1,
+		4, 1, 5, 
 	};
 
 	VertexArray vao;
 	vao.Bind();
 
 	VertexBufferLayout layout;
-	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT });
+	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
+	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
 	VertexBuffer vbo{ vertices, sizeof(vertices) };
 
 	IndexBuffer ibo{ indices, sizeof(indices) / sizeof(unsigned int) };
 
 	vao.AddBuffer(vbo, layout);
+
+	glClear(GL_DEPTH_BUFFER_BIT); // these are flags, so maybe pass clear flags to renderer from outside?
 
 	Renderer rend;
 	rend.Clear();
@@ -191,7 +227,7 @@ static bool initWindow(GLFWwindow** window)
 
 	// TODO : Make debug work with stream isnertion or some other easy way of formatting a string
 	std::cout << "openGL version: " << glGetString(GL_VERSION) << '\n';
-
+	glEnable(GL_DEPTH_TEST);
 	glEnable(GL_DEBUG_OUTPUT);
 	//glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
 	glDebugMessageCallback(printDebugMessage, NULL);

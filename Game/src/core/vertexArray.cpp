@@ -20,6 +20,7 @@ void VertexArray::AddBuffer(const VertexBuffer& vbuffer, const VertexBufferLayou
 	for (int i = 0; i < elements.size(); ++i)
 	{
 		glEnableVertexAttribArray(i);
+		// if want to do verices and colors on fidderent buffers, this needs to be refactored
 		glVertexAttribPointer(i, elements[i].amount, elements[i].type, elements[i].normalized,
 			layout.GetStride(), (const void*)(static_cast<uint64_t>(offset) * layout.GetSizeForType(elements[i].type)));
 		offset += elements[i].amount;
