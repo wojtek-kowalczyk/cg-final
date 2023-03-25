@@ -30,6 +30,7 @@ static void render(const Camera& camera);
 static void imguiRender();
 static void cleanupImGui();
 static void cleanupWindow(GLFWwindow* window);
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 
@@ -71,8 +72,7 @@ int main()
 
 static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO : I don't want to pass camera here. It should be updated like some kind of entity?
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	// These are not handled in a callback because of the delay between key press and key repeat
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera.ProcessKeyboard(Camera::MovementDirection::Forward, deltaTime);
@@ -82,6 +82,10 @@ static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO 
 		camera.ProcessKeyboard(Camera::MovementDirection::Left, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		camera.ProcessKeyboard(Camera::MovementDirection::Right, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Down, deltaTime);
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+		camera.ProcessKeyboard(Camera::MovementDirection::Up, deltaTime);
 }
 
 static void render(const Camera& camera)
@@ -236,7 +240,6 @@ static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum seve
 	}
 }
 
-/// <returns>true if initialization was successful</returns>
 static bool initWindow(GLFWwindow** window)
 {
 	glfwInit();
@@ -259,6 +262,7 @@ static bool initWindow(GLFWwindow** window)
 	glfwSetInputMode(*window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 	//glfwSetInputMode(*window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 	glfwSetWindowSizeCallback(*window, onWindowResized);
+	glfwSetKeyCallback(*window, key_callback);
 	glfwSetCursorPosCallback(*window, mouse_callback);
 	glfwSetScrollCallback(*window, scroll_callback);
 	glfwSwapInterval(0); // disable vsync , 1 - enable (I think?)
@@ -299,6 +303,12 @@ static void initImGui(GLFWwindow* window)
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 430");
+}
+
+static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+		glfwSetWindowShouldClose(window, true);
 }
 
 static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
