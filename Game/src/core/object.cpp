@@ -1,16 +1,16 @@
 #include "object.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Object::Object(const std::weak_ptr<Mesh>& mesh)
+Object::Object(const std::shared_ptr<Mesh>& mesh)
 {
 	m_meshes.push_back(mesh);
 }
 
-//Object::Object(const std::vector<std::weak_ptr<Mesh>>& meshes) : m_meshes(meshes)
+//Object::Object(const std::vector<std::shared_ptr<Mesh>>& meshes) : m_meshes(meshes)
 //{
 //}
 
-glm::mat4 Object::GetModelMatrix()
+glm::mat4 Object::GetModelMatrix() const
 {
 	glm::mat4 model{ 1.0f };
 	

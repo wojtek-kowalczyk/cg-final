@@ -22,6 +22,7 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include <iostream>
+#include <core/scene.h>
 
 #pragma region Notes
 //glm::vec3 Pivot;
@@ -49,9 +50,7 @@ static void onWindowResized(GLFWwindow* window, int width, int height);
 static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 static bool initWindow(GLFWwindow** window);
 static void initImGui(GLFWwindow* window);
-static void update(GLFWwindow* window, float deltaTime, Camera& camera);
-static void render(const Camera& camera);
-static void imguiRender();
+static void imguiRender(Scene& scene, float deltaTime);
 static void cleanupImGui();
 static void cleanupWindow(GLFWwindow* window);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
@@ -62,8 +61,9 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
 
-// TODO : this has to be global for callbacks?
-Camera mainCamera;
+// TODO : maybe put the camera entirely in a scene?
+// TODO : this has to be global for callbacks? Figure out a way to not do that
+std::shared_ptr<Camera> mainCamera;
 
 int main()
 {
@@ -71,61 +71,16 @@ int main()
 	initWindow(&window);
 	initImGui(window);
 
-	mainCamera.Position = glm::vec3(3.0f, 3.0f, 3.0f);
-	//mainCamera.Front = glm::vec3(0.0f, 0.0f, 0.0f) - mainCamera.Position;
-	mainCamera.LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+	mainCamera = std::make_shared<Camera>();
+	mainCamera->Position = glm::vec3(3.0f, 3.0f, 3.0f);
+	mainCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	while (!glfwWindowShouldClose(window))
+	// Scene setup : TODO : move out of here
+	// TODO : watch a video on smart pointers (vs regualr pointers, mind global camera shared ptr. make it unique? what would that mean?)
+
+	Scene scene{ mainCamera };
+	
 	{
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
-
-		update(window, deltaTime, mainCamera);
-		render(mainCamera);
-		imguiRender();
-
-		glfwSwapBuffers(window);
-		glfwPollEvents();
-	}
-
-	cleanupImGui();
-	cleanupWindow(window);
-	return 0;
-}
-
-static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO : I don't want to pass camera here. It should be updated like some kind of entity?
-{
-	// These are not handled in a callback because of the delay between key press and key repeat
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Forward, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Backward, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Left, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Right, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Down, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
-		camera.ProcessKeyboard(Camera::MovementDirection::Up, deltaTime);
-}
-
-static void render(const Camera& camera)
-{
-	{
-		// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
-		Shader shader{ "res/vert.glsl", "res/frag.glsl" };
-
-		// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
-		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
-		glm::mat4 view = camera.GetViewMatrix();
-
-		shader.use();
-		shader.setMat4f("u_v", view);
-		shader.setMat4f("u_p", projection);
-
 		float vertices[] = {
 			// front			// front colors
 			-1.0, -1.0, 1.0,	1.0, 1.0, 0.0,
@@ -167,8 +122,8 @@ static void render(const Camera& camera)
 		auto mesh1 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
 		auto mesh2 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
 
-		Object obj1{ std::weak_ptr<Mesh>(mesh1) };
-		Object obj2{ std::weak_ptr<Mesh>(mesh2) };
+		Object obj1{ std::shared_ptr<Mesh>(mesh1) };
+		Object obj2{ std::shared_ptr<Mesh>(mesh2) };
 
 		obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
 		obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
@@ -176,14 +131,27 @@ static void render(const Camera& camera)
 		obj2.Position = glm::vec3(0.0f, 0.0f, 0.0f);
 		obj2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
 
-		Renderer rend;
-		rend.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-		rend.Clear();
-		shader.setMat4f("u_m", obj1.GetModelMatrix());
-		rend.Draw(*mesh1, shader);
-		shader.setMat4f("u_m", obj2.GetModelMatrix());
-		rend.Draw(*mesh2, shader);
+		scene.AddObject(obj1);
+		scene.AddObject(obj2);
 	}
+
+	while (!glfwWindowShouldClose(window))
+	{
+		float currentFrame = static_cast<float>(glfwGetTime());
+		deltaTime = currentFrame - lastFrame;
+		lastFrame = currentFrame;
+
+		scene.Update(window, deltaTime);
+		scene.Render();		
+		imguiRender(scene, deltaTime); 
+
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
+
+	cleanupImGui();
+	cleanupWindow(window);
+	return 0;
 }
 
 static void cleanupWindow(GLFWwindow* window)
@@ -199,19 +167,24 @@ static void cleanupImGui()
 	ImGui::DestroyContext();
 }
 
-static void imguiRender()
+static void imguiRender(Scene& scene, float deltaTime) // no const ref cuz ImGui modifies member variables
 {
 	// Start the Dear ImGui frame
 	ImGui_ImplOpenGL3_NewFrame();
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("hello dear imgui");
-	ImGui::Text("Some Text");
+	ImGui::Begin("CG Final GUI");
+	// TODO : Frame timer
+
+	// draw scene specific window *CONTENTS*
+	scene.OnImGuiRender();
+
 	ImGui::End();
 
 	ImGui::Render();
 	ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
 }
 
 static void onWindowResized(GLFWwindow* window, int width, int height)
@@ -362,10 +335,10 @@ static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	mainCamera.ProcessMouseMovement(xoffset, yoffset); // how do I pass camera to this function, when I can't modify its interface?
+	mainCamera->ProcessMouseMovement(xoffset, yoffset); // how do I pass camera to this function, when I can't modify its interface?
 }
 
 void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	mainCamera.ProcessMouseScroll(static_cast<float>(yoffset));
+	mainCamera->ProcessMouseScroll(static_cast<float>(yoffset));
 }

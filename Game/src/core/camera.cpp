@@ -45,7 +45,7 @@ void Camera::ProcessKeyboard(MovementDirection direction, float deltaTime)
 		Position.y -= velocity;
 }
 
-void Camera::ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch)
+void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
 	xoffset *= MouseSensitivity;
 	yoffset *= MouseSensitivity;

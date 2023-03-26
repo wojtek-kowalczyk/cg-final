@@ -47,7 +47,7 @@ public:
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
     // TODO : The processing methods shouldn't be here I think. They should be in a class that controls the camera. The camera's job is to construct the view Matrix from its state.
     void ProcessKeyboard(MovementDirection direction, float deltaTime);
-    void ProcessMouseMovement(float xoffset, float yoffset, GLboolean constrainPitch = true);
+    void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
     glm::mat4 GetViewMatrix() const;
     void LookAt(glm::vec3 target);

@@ -189,6 +189,7 @@
     <ClCompile Include="src\core\mesh.cpp" />
     <ClCompile Include="src\core\object.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
+    <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\shader.cpp" />
     <ClCompile Include="src\core\texture.cpp" />
     <ClCompile Include="src\core\vertexArray.cpp" />
