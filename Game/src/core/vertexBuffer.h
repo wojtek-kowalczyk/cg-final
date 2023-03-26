@@ -24,14 +24,14 @@ private:
 class VertexBuffer
 {
 public:
-	VertexBuffer(const void* data, unsigned int size);
+	VertexBuffer(const float* data, unsigned int count);
 	~VertexBuffer();
 
 	void Bind() const;
 	void Unbind() const;
-	unsigned int GetSize() const { return m_size; }
+	unsigned int GetSize() const { return m_count * sizeof(float); }
 
 private:
 	unsigned int m_id;
-	unsigned int m_size;
+	unsigned int m_count;
 };

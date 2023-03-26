@@ -186,6 +186,7 @@
     <ClCompile Include="src\core\camera.cpp" />
     <ClCompile Include="src\core\indexBuffer.cpp" />
     <ClCompile Include="src\core\log.cpp" />
+    <ClCompile Include="src\core\mesh.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
     <ClCompile Include="src\core\shader.cpp" />
     <ClCompile Include="src\core\texture.cpp" />
@@ -494,6 +495,8 @@
     <ClInclude Include="src\core\camera.h" />
     <ClInclude Include="src\core\indexBuffer.h" />
     <ClInclude Include="src\core\log.h" />
+    <ClInclude Include="src\core\mesh.h" />
+    <ClInclude Include="src\core\object.h" />
     <ClInclude Include="src\core\renderer.h" />
     <ClInclude Include="src\core\scene.h" />
     <ClInclude Include="src\core\shader.h" />

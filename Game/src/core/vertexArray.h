@@ -4,9 +4,6 @@
 
 class VertexArray
 {
-private:
-	unsigned int m_id;
-
 public:
 	VertexArray();
 	~VertexArray();
@@ -14,4 +11,8 @@ public:
 	void AddBuffer(const VertexBuffer& vbuffer, const VertexBufferLayout& layout);
 	void Bind() const;
 	void Unbind() const;
+
+private:
+	unsigned int m_id;
+
 };

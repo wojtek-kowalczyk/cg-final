@@ -8,6 +8,7 @@
 #include "core/indexBuffer.h"
 #include "core/renderer.h"
 #include "core/camera.h"
+#include "core/mesh.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -20,6 +21,28 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include <iostream>
+
+#pragma region Notes
+//glm::vec3 Pivot;
+// pivot by default should be assumed to be 0,0,0 of local space, which then gets transformed.
+// if we want the pivot to be the top of the cube, we would put it at 0,1,0 local space, and all rotations translations and scaling should take that into account. 
+
+// how would we define a camera?
+// it has transform just like the object has, forward vectors can be inferred.
+// although camera calls Forward quite a lot, if it becomes a problem we can always just make it a field.
+// but not having this as a field makes things simpler (no sync required)
+
+// light? 
+// position, direction, radius, falloff, intensity, color etc..
+// we would be wasting rotation and scale
+
+// handle single and multi mech objects as parts of the same object
+
+// so not taking the component architecture, we could have
+// Camera -> basically a factory for view matrix. Position and euler angles.
+// point light -> position, radius, intensity, color, falloff
+// directional light -> direction, color, intensity (does this even have to be an entity? Might be though)
+#pragma endregion	
 
 static void onWindowResized(GLFWwindow* window, int width, int height);
 static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
@@ -137,23 +160,16 @@ static void render(const Camera& camera)
 		4, 1, 5, 
 	};
 
-	VertexArray vao;
-	vao.Bind();
-
 	VertexBufferLayout layout;
 	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
-	VertexBuffer vbo{ vertices, sizeof(vertices) };
 
-	IndexBuffer ibo{ indices, sizeof(indices) / sizeof(unsigned int) };
-
-	vao.AddBuffer(vbo, layout);
-
-	glClear(GL_DEPTH_BUFFER_BIT); // these are flags, so maybe pass clear flags to renderer from outside?
+	Mesh mesh{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout};
 
 	Renderer rend;
+	rend.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	rend.Clear();
-	rend.Draw(vao, ibo, shader);
+	rend.Draw(mesh, shader);
 }
 
 static void cleanupWindow(GLFWwindow* window)
