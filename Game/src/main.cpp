@@ -116,13 +116,13 @@ static void render(const Camera& camera)
 	// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
 	Shader shader{ "res/vert.glsl", "res/frag.glsl" };
 
-	glm::mat4 model{ 1.0f };
+	glm::mat4 model1{ 1.0f };
+	glm::mat4 model2 = glm::rotate(model1, glm::radians(45.0f), glm::vec3(0, 1, 0));
 	// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
 	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 view = camera.GetViewMatrix();
 
 	shader.use();
-	shader.setMat4f("u_m", model);
 	shader.setMat4f("u_v", view);
 	shader.setMat4f("u_p", projection);
 
@@ -164,12 +164,16 @@ static void render(const Camera& camera)
 	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
 
-	Mesh mesh{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout};
+	Mesh mesh1{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout };
+	Mesh mesh2{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout };
 
 	Renderer rend;
 	rend.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	rend.Clear();
-	rend.Draw(mesh, shader);
+	shader.setMat4f("u_m", model1);
+	rend.Draw(mesh1, shader);
+	shader.setMat4f("u_m", model2);
+	rend.Draw(mesh2, shader);
 }
 
 static void cleanupWindow(GLFWwindow* window)
