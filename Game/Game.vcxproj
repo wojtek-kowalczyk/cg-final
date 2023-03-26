@@ -187,6 +187,7 @@
     <ClCompile Include="src\core\indexBuffer.cpp" />
     <ClCompile Include="src\core\log.cpp" />
     <ClCompile Include="src\core\mesh.cpp" />
+    <ClCompile Include="src\core\object.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
     <ClCompile Include="src\core\shader.cpp" />
     <ClCompile Include="src\core\texture.cpp" />

@@ -13,7 +13,6 @@ public:
 	std::unique_ptr<VertexBuffer> VBO;
 
 	Mesh(const float* vertices, unsigned int vCount, const unsigned int* indices, unsigned int iCount, const VertexBufferLayout& layout);
-
 private:
 
 };

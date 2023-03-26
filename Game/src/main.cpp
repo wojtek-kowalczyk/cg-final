@@ -9,6 +9,7 @@
 #include "core/renderer.h"
 #include "core/camera.h"
 #include "core/mesh.h"
+#include "core/object.h"	
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -74,8 +75,8 @@ int main()
 	//mainCamera.Front = glm::vec3(0.0f, 0.0f, 0.0f) - mainCamera.Position;
 	mainCamera.LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-    while (!glfwWindowShouldClose(window))
-    {
+	while (!glfwWindowShouldClose(window))
+	{
 		float currentFrame = static_cast<float>(glfwGetTime());
 		deltaTime = currentFrame - lastFrame;
 		lastFrame = currentFrame;
@@ -84,13 +85,13 @@ int main()
 		render(mainCamera);
 		imguiRender();
 
-        glfwSwapBuffers(window);
-        glfwPollEvents();
-    }
+		glfwSwapBuffers(window);
+		glfwPollEvents();
+	}
 
 	cleanupImGui();
 	cleanupWindow(window);
-    return 0;
+	return 0;
 }
 
 static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO : I don't want to pass camera here. It should be updated like some kind of entity?
@@ -113,67 +114,76 @@ static void update(GLFWwindow* window, float deltaTime, Camera& camera) // TODO 
 
 static void render(const Camera& camera)
 {
-	// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
-	Shader shader{ "res/vert.glsl", "res/frag.glsl" };
+	{
+		// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
+		Shader shader{ "res/vert.glsl", "res/frag.glsl" };
 
-	glm::mat4 model1{ 1.0f };
-	glm::mat4 model2 = glm::rotate(model1, glm::radians(45.0f), glm::vec3(0, 1, 0));
-	// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
-	glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
-	glm::mat4 view = camera.GetViewMatrix();
+		// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
+		glm::mat4 projection = glm::perspective(glm::radians(camera.Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
+		glm::mat4 view = camera.GetViewMatrix();
 
-	shader.use();
-	shader.setMat4f("u_v", view);
-	shader.setMat4f("u_p", projection);
+		shader.use();
+		shader.setMat4f("u_v", view);
+		shader.setMat4f("u_p", projection);
 
-	float vertices[] = {
-		// front			// front colors
-		-1.0, -1.0, 1.0,	1.0, 1.0, 0.0,
-		1.0, -1.0, 1.0,		0.0, 1.0, 0.0,
-		1.0, 1.0, 1.0,		0.0, 0.0, 1.0,
-		-1.0, 1.0, 1.0,		1.0, 1.0, 1.0,
-		// back				// back colors
-		-1.0, -1.0, -1.0,	0.0, 1.0, 1.0,
-		1.0, -1.0, -1.0,	1.0, 0.0, 1.0,
-		1.0, 1.0, -1.0,		1.0, 0.0, 0.0,
-		-1.0, 1.0, -1.0, 	1.0, 1.0, 0.0
-	};
+		float vertices[] = {
+			// front			// front colors
+			-1.0, -1.0, 1.0,	1.0, 1.0, 0.0,
+			1.0, -1.0, 1.0,		0.0, 1.0, 0.0,
+			1.0, 1.0, 1.0,		0.0, 0.0, 1.0,
+			-1.0, 1.0, 1.0,		1.0, 1.0, 1.0,
+			// back				// back colors
+			-1.0, -1.0, -1.0,	0.0, 1.0, 1.0,
+			1.0, -1.0, -1.0,	1.0, 0.0, 1.0,
+			1.0, 1.0, -1.0,		1.0, 0.0, 0.0,
+			-1.0, 1.0, -1.0, 	1.0, 1.0, 0.0
+		};
 
-	unsigned int indices[] = {
-		// front
-		0, 1, 2,
-		2, 3, 0,
-		// right
-		2, 1, 6,
-		6, 1, 5,
-		// back
-		6, 7, 4,
-		4, 5, 6,
-		// left
-		7, 4, 0,
-		0, 7, 3,
-		//top
-		7, 3, 2,
-		2, 6, 7,
-		//bottom
-		4, 0, 1,
-		4, 1, 5, 
-	};
+		unsigned int indices[] = {
+			// front
+			0, 1, 2,
+			2, 3, 0,
+			// right
+			2, 1, 6,
+			6, 1, 5,
+			// back
+			6, 7, 4,
+			4, 5, 6,
+			// left
+			7, 4, 0,
+			0, 7, 3,
+			//top
+			7, 3, 2,
+			2, 6, 7,
+			//bottom
+			4, 0, 1,
+			4, 1, 5,
+		};
 
-	VertexBufferLayout layout;
-	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
-	layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
+		VertexBufferLayout layout;
+		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
+		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
 
-	Mesh mesh1{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout };
-	Mesh mesh2{ vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout };
+		auto mesh1 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
+		auto mesh2 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
 
-	Renderer rend;
-	rend.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
-	rend.Clear();
-	shader.setMat4f("u_m", model1);
-	rend.Draw(mesh1, shader);
-	shader.setMat4f("u_m", model2);
-	rend.Draw(mesh2, shader);
+		Object obj1{ std::weak_ptr<Mesh>(mesh1) };
+		Object obj2{ std::weak_ptr<Mesh>(mesh2) };
+
+		obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
+		obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
+
+		obj2.Position = glm::vec3(0.0f, 0.0f, 0.0f);
+		obj2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+		Renderer rend;
+		rend.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+		rend.Clear();
+		shader.setMat4f("u_m", obj1.GetModelMatrix());
+		rend.Draw(*mesh1, shader);
+		shader.setMat4f("u_m", obj2.GetModelMatrix());
+		rend.Draw(*mesh2, shader);
+	}
 }
 
 static void cleanupWindow(GLFWwindow* window)
