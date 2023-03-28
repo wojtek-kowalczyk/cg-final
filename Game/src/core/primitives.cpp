@@ -52,3 +52,31 @@ std::shared_ptr<Mesh> Primitives::Cube()
 
     return cube;
 }
+
+std::shared_ptr<Mesh> Primitives::Plane()
+{
+	static constexpr float vertices[] = {
+		-1.0f, 0.0f, -1.0f,
+		+1.0f, 0.0f, -1.0f,
+		+1.0f, 0.0f, +1.0f,
+		-1.0f, 0.0f, +1.0f,
+	};
+
+	static constexpr unsigned int indices[] = {
+		0, 1, 2,
+		2, 0, 3,
+	};
+
+	static std::shared_ptr<Mesh> plane = nullptr;
+
+	if (!plane)
+	{
+		VertexBufferLayout layout;
+		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
+
+		plane = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float),
+			indices, sizeof(indices) / sizeof(unsigned int), layout);
+	}
+
+	return plane;
+}
