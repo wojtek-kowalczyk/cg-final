@@ -10,6 +10,7 @@
 #include "core/camera.h"
 #include "core/mesh.h"
 #include "core/object.h"	
+#include "core/primitives.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -56,6 +57,7 @@ static void cleanupWindow(GLFWwindow* window);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+static void setupScene(Scene& scene);
 
 // timing
 float deltaTime = 0.0f;
@@ -63,6 +65,7 @@ float lastFrame = 0.0f;
 
 // TODO : maybe put the camera entirely in a scene?
 // TODO : this has to be global for callbacks? Figure out a way to not do that
+// TODO : watch a video on smart pointers (vs regualr pointers, mind global camera shared ptr. make it unique? what would that mean?)
 std::shared_ptr<Camera> mainCamera;
 
 int main()
@@ -75,66 +78,9 @@ int main()
 	mainCamera->Position = glm::vec3(3.0f, 3.0f, 3.0f);
 	mainCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	// Scene setup : TODO : move out of here
-	// TODO : watch a video on smart pointers (vs regualr pointers, mind global camera shared ptr. make it unique? what would that mean?)
-
 	Scene scene{ mainCamera };
+	setupScene(scene);
 	
-	{
-		float vertices[] = {
-			// front			// front colors
-			-1.0, -1.0, 1.0,	1.0, 1.0, 0.0,
-			1.0, -1.0, 1.0,		0.0, 1.0, 0.0,
-			1.0, 1.0, 1.0,		0.0, 0.0, 1.0,
-			-1.0, 1.0, 1.0,		1.0, 1.0, 1.0,
-			// back				// back colors
-			-1.0, -1.0, -1.0,	0.0, 1.0, 1.0,
-			1.0, -1.0, -1.0,	1.0, 0.0, 1.0,
-			1.0, 1.0, -1.0,		1.0, 0.0, 0.0,
-			-1.0, 1.0, -1.0, 	1.0, 1.0, 0.0
-		};
-
-		unsigned int indices[] = {
-			// front
-			0, 1, 2,
-			2, 3, 0,
-			// right
-			2, 1, 6,
-			6, 1, 5,
-			// back
-			6, 7, 4,
-			4, 5, 6,
-			// left
-			7, 4, 0,
-			0, 7, 3,
-			//top
-			7, 3, 2,
-			2, 6, 7,
-			//bottom
-			4, 0, 1,
-			4, 1, 5,
-		};
-
-		VertexBufferLayout layout;
-		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
-		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
-
-		auto mesh1 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
-		auto mesh2 = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float), indices, sizeof(indices) / sizeof(unsigned int), layout);
-
-		Object obj1{ std::shared_ptr<Mesh>(mesh1) };
-		Object obj2{ std::shared_ptr<Mesh>(mesh2) };
-
-		obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
-		obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
-
-		obj2.Position = glm::vec3(0.0f, 0.0f, 0.0f);
-		obj2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
-
-		scene.AddObject(obj1);
-		scene.AddObject(obj2);
-	}
-
 	while (!glfwWindowShouldClose(window))
 	{
 		float currentFrame = static_cast<float>(glfwGetTime());
@@ -152,6 +98,21 @@ int main()
 	cleanupImGui();
 	cleanupWindow(window);
 	return 0;
+}
+
+static void setupScene(Scene& scene)
+{
+	Object obj1{ Primitives::Cube() };
+	Object obj2{ Primitives::Cube() };
+
+	obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
+	obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
+
+	obj2.Position = glm::vec3(0.0f, 0.0f, 0.0f);
+	obj2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
+
+	scene.AddObject(obj1);
+	scene.AddObject(obj2);
 }
 
 static void cleanupWindow(GLFWwindow* window)

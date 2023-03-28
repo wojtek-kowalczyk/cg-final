@@ -81,6 +81,9 @@
     <ClCompile Include="src\core\scene.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\primitives.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\glad\glad.h">
@@ -1005,6 +1008,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="src\core\mesh.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

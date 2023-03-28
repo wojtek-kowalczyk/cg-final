@@ -49,11 +49,11 @@ void Scene::Render() const
 	shader.setMat4f("u_v", view);
 	shader.setMat4f("u_p", projection);
 
-	for (auto&& object : m_objects)
+	for (const auto& object : m_objects)
 	{
 		glm::mat4 model = object.GetModelMatrix();
 
-		for (auto&& mesh : object.m_meshes)
+		for (const auto& mesh : object.m_meshes)
 		{
 			shader.setMat4f("u_m", model);
 			m_renderer.Draw(*mesh, shader);

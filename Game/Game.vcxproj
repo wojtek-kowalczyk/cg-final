@@ -188,6 +188,7 @@
     <ClCompile Include="src\core\log.cpp" />
     <ClCompile Include="src\core\mesh.cpp" />
     <ClCompile Include="src\core\object.cpp" />
+    <ClCompile Include="src\core\primitives.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
     <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\shader.cpp" />
@@ -499,6 +500,7 @@
     <ClInclude Include="src\core\log.h" />
     <ClInclude Include="src\core\mesh.h" />
     <ClInclude Include="src\core\object.h" />
+    <ClInclude Include="src\core\primitives.h" />
     <ClInclude Include="src\core\renderer.h" />
     <ClInclude Include="src\core\scene.h" />
     <ClInclude Include="src\core\shader.h" />
