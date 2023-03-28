@@ -18,6 +18,13 @@ glm::mat4 Camera::GetViewMatrix() const
 	return glm::lookAt(Position, Position + Forward, Up);
 }
 
+glm::mat4 Camera::GetProjectionMatrix() const
+{
+	// TODO : should camera handle this?
+	//return glm::perspective(glm::radians(Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f)
+	return glm::mat4(1.0f);
+}
+
 void Camera::LookAt(glm::vec3 target)
 {
 	glm::vec3 newFront = glm::normalize(target - Position); // TODO : front should Actually be called forward in my opinion

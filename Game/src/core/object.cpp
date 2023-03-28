@@ -1,7 +1,8 @@
 #include "object.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-Object::Object(const std::shared_ptr<Mesh>& mesh)
+Object::Object(const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<Material>& material)
+	: m_material(material)
 {
 	m_meshes.push_back(mesh);
 }

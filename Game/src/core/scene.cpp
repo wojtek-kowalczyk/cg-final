@@ -37,25 +37,27 @@ void Scene::Render() const
 {
 	m_renderer.Clear();
 
-	// TODO : move shader to be a part of material
-	// Shader setup can be done outside. mind what things need to update (eg. view matrix coming from "camera")
-	Shader shader{ "res/vert.glsl", "res/frag.glsl" };
 	auto cam = m_camera.lock();
+
 	// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
 	glm::mat4 projection = glm::perspective(glm::radians(cam->Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
 	glm::mat4 view = cam->GetViewMatrix();
 
-	shader.use();
-	shader.setMat4f("u_v", view);
-	shader.setMat4f("u_p", projection);
-
 	for (const auto& object : m_objects)
 	{
 		glm::mat4 model = object.GetModelMatrix();
+		Shader& shader = *(object.m_material->MainShader);
+		shader.use();
+		// TODO : isn't setting view and projection for every object a waste if we use only one shader for all objects?
+		// or can you access vertex and fragment shader seaprately? so I could have all object share the vertex shader but different fragment shaders?
+		shader.setMat4f("u_v", view); 
+		shader.setMat4f("u_p", projection);
+
+		shader.setMat4f("u_m", model);
+		shader.setVec3f("u_color", object.m_material->Albedo);
 
 		for (const auto& mesh : object.m_meshes)
 		{
-			shader.setMat4f("u_m", model);
 			m_renderer.Draw(*mesh, shader);
 		}
 	}

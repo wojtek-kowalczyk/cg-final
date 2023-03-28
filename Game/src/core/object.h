@@ -1,9 +1,11 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <vector>
-
 #include "mesh.h"
+#include "material.h"
+
+#include <glm/glm.hpp>
+
+#include <vector>
 
 class Object
 {
@@ -12,13 +14,14 @@ public:
 	glm::vec3 Rotation	{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 Scale		{ 1.0f, 1.0f, 1.0f };
 
-	Object(const std::shared_ptr<Mesh>& mesh);
+	Object(const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<Material>& material);
 	//Object(const std::vector<std::shared_ptr<Mesh>>& meshes);
 
 	glm::mat4 GetModelMatrix() const;
 private:
+	// will there ever be a case of more meshes than materials or vice versa?
 	std::vector<std::shared_ptr<Mesh>> m_meshes;
-	// TODO : material(s)?
+	std::shared_ptr<Material> m_material;
 
 	friend class Scene;
 };

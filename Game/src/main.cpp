@@ -59,6 +59,8 @@ static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 static void setupScene(Scene& scene);
 
+// how should be object handles like VertexBuffer or shader handled? should they be stack or hep allocated? Shader is just one int...
+
 // timing
 float deltaTime = 0.0f;
 float lastFrame = 0.0f;
@@ -102,8 +104,13 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	Object obj1{ Primitives::Cube() };
-	Object obj2{ Primitives::Cube() };
+	auto basicShader = std::make_shared<Shader>("res/vert.glsl", "res/frag.glsl");
+
+	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicShader);
+	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicShader);
+
+	Object obj1{ Primitives::Cube(), blue };
+	Object obj2{ Primitives::Cube(), orange };
 
 	obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
 	obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);

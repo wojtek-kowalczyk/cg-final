@@ -50,6 +50,7 @@ public:
     void ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch = true);
     void ProcessMouseScroll(float yoffset);
     glm::mat4 GetViewMatrix() const;
+    glm::mat4 GetProjectionMatrix() const;
     void LookAt(glm::vec3 target);
 
 private:
