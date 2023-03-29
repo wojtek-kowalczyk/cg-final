@@ -11,6 +11,8 @@
 #include "core/mesh.h"
 #include "core/object.h"	
 #include "core/primitives.h"
+#include "core/time.h"
+#include "core/scene.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -23,7 +25,6 @@
 #include <imgui/imgui_impl_opengl3.h>
 
 #include <iostream>
-#include <core/scene.h>
 
 #pragma region Notes
 //glm::vec3 Pivot;
@@ -57,13 +58,10 @@ static void cleanupWindow(GLFWwindow* window);
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods);
 static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 static void setupScene(Scene& scene);
 
 // how should be object handles like VertexBuffer or shader handled? should they be stack or hep allocated? Shader is just one int...
-
-// timing
-float deltaTime = 0.0f;
-float lastFrame = 0.0f;
 
 // TODO : maybe put the camera entirely in a scene?
 // TODO : this has to be global for callbacks? Figure out a way to not do that
@@ -83,11 +81,12 @@ int main()
 	Scene scene{ mainCamera };
 	setupScene(scene);
 	
+	Timer frameTimer{};
+
 	while (!glfwWindowShouldClose(window))
 	{
-		float currentFrame = static_cast<float>(glfwGetTime());
-		deltaTime = currentFrame - lastFrame;
-		lastFrame = currentFrame;
+		float deltaTime = frameTimer.Poll();
+		frameTimer.Start();
 
 		scene.Update(window, deltaTime);
 		scene.Render();
@@ -150,11 +149,13 @@ static void imguiRender(Scene& scene, float deltaTime) // no const ref cuz ImGui
 	ImGui::NewFrame();
 
 	ImGui::Begin("CG Final GUI");
-	// TODO : Frame timer
-
-	// draw scene specific window *CONTENTS*
-	scene.OnImGuiRender();
-
+	{
+		ImGui::SetWindowFontScale(2.0f);
+		auto& io = ImGui::GetIO();
+		ImGui::Text("Frame avg: %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate); // rolling average
+	
+		scene.OnImGuiRender();
+	}
 	ImGui::End();
 
 	ImGui::Render();
@@ -242,6 +243,7 @@ static bool initWindow(GLFWwindow** window)
 	glfwSetWindowSizeCallback(*window, onWindowResized);
 	glfwSetKeyCallback(*window, key_callback);
 	glfwSetCursorPosCallback(*window, mouse_callback);
+	glfwSetMouseButtonCallback(*window, mouse_button_callback);
 	glfwSetScrollCallback(*window, scroll_callback);
 	glfwSwapInterval(0); // disable vsync , 1 - enable (I think?)
 
@@ -281,12 +283,24 @@ static void initImGui(GLFWwindow* window)
 	// Setup Platform/Renderer backends
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui_ImplOpenGL3_Init("#version 430");
+
 }
 
 static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+	{
+		if (mainCamera->IsLocked())
+		{
+			// TODO : might wanna get rid of this.
+			glfwSetWindowShouldClose(window, true);
+		}
+		else
+		{
+			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			mainCamera->Lock();
+		}
+	}
 }
 
 static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
@@ -313,7 +327,19 @@ static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	mainCamera->ProcessMouseMovement(xoffset, yoffset); // how do I pass camera to this function, when I can't modify its interface?
 }
 
-void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
+static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
 	mainCamera->ProcessMouseScroll(static_cast<float>(yoffset));
+}
+
+static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods)
+{
+	if (ImGui::GetIO().WantCaptureMouse)
+		return;
+
+	if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS && mainCamera->IsLocked())
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		mainCamera->Unlock();
+	}
 }

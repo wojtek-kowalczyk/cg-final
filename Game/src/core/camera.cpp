@@ -33,8 +33,21 @@ void Camera::LookAt(glm::vec3 target)
 	updateCameraVectors();
 }
 
+void Camera::Lock()
+{
+	m_allowMovement = false;
+}
+
+void Camera::Unlock()
+{
+	m_allowMovement = true;
+}
+
 void Camera::ProcessKeyboard(MovementDirection direction, float deltaTime)
 {
+	if (m_allowMovement == false)
+		return;
+
 	float velocity = MovementSpeed * deltaTime;
 	if (direction == MovementDirection::Forward)
 		Position += Forward * velocity;
@@ -54,6 +67,9 @@ void Camera::ProcessKeyboard(MovementDirection direction, float deltaTime)
 
 void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPitch)
 {
+	if (m_allowMovement == false)
+		return;
+
 	xoffset *= MouseSensitivity;
 	yoffset *= MouseSensitivity;
 
@@ -75,6 +91,9 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 
 void Camera::ProcessMouseScroll(float yoffset)
 {
+	if (m_allowMovement == false)
+		return;
+
 	Zoom -= (float)yoffset;
 	if (Zoom < 1.0f)
 		Zoom = 1.0f;

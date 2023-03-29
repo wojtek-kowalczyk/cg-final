@@ -1019,6 +1019,9 @@
     <ClInclude Include="src\core\primitives.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="src\core\time.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\glm\detail\func_common.inl">

@@ -507,6 +507,7 @@
     <ClInclude Include="src\core\scene.h" />
     <ClInclude Include="src\core\shader.h" />
     <ClInclude Include="src\core\texture.h" />
+    <ClInclude Include="src\core\time.h" />
     <ClInclude Include="src\core\vertexArray.h" />
     <ClInclude Include="src\core\vertexBuffer.h" />
   </ItemGroup>

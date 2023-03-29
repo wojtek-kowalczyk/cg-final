@@ -1,6 +1,6 @@
 #include "scene.h"
 #include "shader.h"
-#include <consts.h>
+#include "../consts.h"
 
 
 Scene::Scene(const std::weak_ptr<Camera>& camera) : m_camera(camera)
@@ -56,14 +56,17 @@ void Scene::Render() const
 		shader.setMat4f("u_m", model);
 		
 		// material properties
-		shader.setVec3f("u_matAmbient", glm::vec3(0.1, 0.1, 0.1));
-		shader.setVec3f("u_matDiffuse", glm::vec3(1, 1, 1));
-		shader.setVec3f("u_objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
-		shader.setVec3f("u_matSpecular", glm::vec3(1, 1, 1));
-		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
-		shader.setFloat("u_matPower", 40.0f);
+		shader.setVec3f("u_mat.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
+		shader.setVec3f("u_mat.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
+		shader.setVec3f("u_mat.specular", glm::vec3(0.5, 0.5, 0.5));
+		shader.setFloat("u_mat.shininess", 32.0f);
 
-		shader.setVec3f("u_lightPos", glm::vec3(5,5,5));
+		shader.setVec3f("u_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		shader.setVec3f("u_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		shader.setVec3f("u_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3f("u_light.position", glm::vec3(5, 5, 5));
+
+		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
 
 		for (const auto& mesh : object.m_meshes)
 		{
