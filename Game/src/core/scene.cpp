@@ -60,6 +60,7 @@ void Scene::Render() const
 		shader.setVec3f("u_matDiffuse", glm::vec3(1, 1, 1));
 		shader.setVec3f("u_objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
 		shader.setVec3f("u_matSpecular", glm::vec3(1, 1, 1));
+		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
 		shader.setFloat("u_matPower", 40.0f);
 
 		shader.setVec3f("u_lightPos", glm::vec3(5,5,5));

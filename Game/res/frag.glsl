@@ -10,40 +10,23 @@ uniform vec3 u_lightPos;
 uniform vec3 u_matAmbient; // light color
 uniform vec3 u_matDiffuse; // diffuse light color actually
 uniform vec3 u_objectColor; // albedo of the obejct. TODO : sampled from a texture?
-uniform vec3 u_matSpecular;
+uniform vec3 u_matSpecular; // specular light color (should be the same as the light source color I suppose?)
 uniform float u_matPower;
+uniform vec3 u_viewerPos;
 
 // uniform sampler2D texSampler;
 
+// From learnopengl.com
+// "We chose to do the lighting calculations in world space, 
+//  but most people tend to prefer doing lighting in view space. 
+//  An advantage of view space is that the viewer's position is always at (0,0,0)
+//  so you already got the position of the viewer for free. 
+//  However, I find calculating lighting in world space more intuitive for learning purposes.
+//  If you still want to calculate lighting in view space you want to transform all the relevant 
+//  vectors with the view matrix as well (don't forget to change the normal matrix too)."
+
 void main()
 {
-    // Normalize the incoming normal, light and view vectors
-    //vec3 N = normalize(out_normal);
-    //vec3 L = normalize(out_light);
-    //vec3 V = normalize(out_view);
-
-    // Calculate R locally
-    //vec3 R = reflect(-L, N);
-
-    // Compute the diffuse and specular components for each fragment
-    //vec3 diffuse = max(dot(N, L), 0.0) * u_matDiffuse;
-    //vec3 specular = pow(max(dot(R, V), 0.0), u_matPower) * u_matSpecular;
-
-    // Write final color to the framebuffer
-    //gl_FragColor = vec4(u_matAmbient + diffuse + specular, 1.0);
-    //gl_FragColor = vec4(out_normal, 1.0f);
-    //gl_FragColor = vec4(1.0f, 1.0f, 1.0f, 1.0f);
-
-    //vec3 normal = normalize(out_normal);
-    //vec3 lightDir = normalize(u_lightPos - out_fragmentPosInWorldSpace);
-    //float diff = max(dot(normal, lightDir), 0.0);
-    //vec3 diffuse = diff * u_matDiffuse;
-    
-    // TODO : separate ambient into color and strength
-    //vec3 result = (u_matAmbient + diffuse) * u_objectColor;
-    //FragColor = vec4(result, 1.0);
-    //gl_FragColor = vec4(result, 1.0);
-
     // ambient
     //float ambientStrength = 0.1;
     vec3 ambient = u_matAmbient;
@@ -54,7 +37,14 @@ void main()
     float diff = max(dot(normal, lightDir), 0.0);
     vec3 diffuse = diff * u_matDiffuse;
             
-    vec3 result = (ambient + diffuse) * u_objectColor;
+    // specular
+    float specularStrength = 0.5;
+    vec3 viewDir = normalize(u_viewerPos - out_fragmentPosInWorldSpace);
+    vec3 reflectDir = reflect(-lightDir, normal);  
+    float spec = pow(max(dot(viewDir, reflectDir), 0.0), 32);
+    vec3 specular = specularStrength * spec * u_matSpecular;  
+        
+    vec3 result = (ambient + diffuse + specular) * u_objectColor;
     gl_FragColor = vec4(result, 1.0);
 
 }
