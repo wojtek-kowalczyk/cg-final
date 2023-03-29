@@ -6,6 +6,7 @@
 Scene::Scene(const std::weak_ptr<Camera>& camera) : m_camera(camera)
 {
 	m_renderer.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
+	m_renderer.SetMode(Renderer::Mode::Triangles);
 }
 
 void Scene::AddObject(const Object& object)
@@ -52,9 +53,16 @@ void Scene::Render() const
 		// or can you access vertex and fragment shader seaprately? so I could have all object share the vertex shader but different fragment shaders?
 		shader.setMat4f("u_v", view); 
 		shader.setMat4f("u_p", projection);
-
 		shader.setMat4f("u_m", model);
-		shader.setVec3f("u_color", object.m_material->Albedo);
+		
+		// material properties
+		shader.setVec3f("u_matAmbient", glm::vec3(0.1, 0.1, 0.1));
+		shader.setVec3f("u_matDiffuse", glm::vec3(1, 1, 1));
+		shader.setVec3f("u_objectColor", glm::vec3(1.0f, 0.5f, 0.31f));
+		shader.setVec3f("u_matSpecular", glm::vec3(1, 1, 1));
+		shader.setFloat("u_matPower", 40.0f);
+
+		shader.setVec3f("u_lightPos", glm::vec3(5,5,5));
 
 		for (const auto& mesh : object.m_meshes)
 		{

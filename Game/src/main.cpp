@@ -90,7 +90,7 @@ int main()
 		lastFrame = currentFrame;
 
 		scene.Update(window, deltaTime);
-		scene.Render();		
+		scene.Render();
 		imguiRender(scene, deltaTime); 
 
 		glfwSwapBuffers(window);
@@ -110,20 +110,21 @@ static void setupScene(Scene& scene)
 	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicShader);
 	auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicShader);
 
-	Object obj1{ Primitives::Cube(), blue };
+	Object obj1{ Primitives::Sphere(), blue };
 	Object obj2{ Primitives::Cube(), orange };
 	Object obj3{ Primitives::Plane(), yellow }; 
 
-	obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
-	obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
+	//obj1.Position = glm::vec3(1.0f, 1.0f, 0.0f);
+	//obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
+	//obj1.Scale = glm::vec3(0.3, 1.0, 1.0);
 
-	obj2.Position = glm::vec3(0.0f, 0.5f, 0.0f);
-	obj2.Scale = glm::vec3(0.5f, 0.5f, 0.5f);
+	obj2.Position = glm::vec3(+3.0f, 1.0f, -2.0f);
+	obj2.Scale = glm::vec3(3.0f, 2.0f, 1.0f);
 
 	obj3.Scale = glm::vec3(10.0f, 10.0f, 10.0f);
 
 	scene.AddObject(obj1);
-	scene.AddObject(obj2);
+	//scene.AddObject(obj2);
 	scene.AddObject(obj3);
 }
 
