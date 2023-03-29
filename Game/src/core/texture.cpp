@@ -1,9 +1,9 @@
 #include "texture.h"
-#include "glad/glad.h"
 #include "stb_image/stb_image.h"
 #include "log.h"
 
-Texture::Texture(const std::string& path) : m_rendererId(0), m_width(0), m_height(0), m_bitsPerPixel(0)
+Texture::Texture(const std::string& path, Texture::TextureFormat format) 
+	: m_rendererId(0), m_width(0), m_height(0), m_bitsPerPixel(0)
 {
 	glGenTextures(1, &m_rendererId);
 	glBindTexture(GL_TEXTURE_2D, m_rendererId);
@@ -20,7 +20,8 @@ Texture::Texture(const std::string& path) : m_rendererId(0), m_width(0), m_heigh
 
 	if (data)
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, m_width, m_height, 0, GL_RGB, GL_UNSIGNED_BYTE, data); // TODO : modes (GL_RGB... stuff)
+		GLint glFormat = GetGLEnumForTextureFormat(format);
+		glTexImage2D(GL_TEXTURE_2D, 0, glFormat, m_width, m_height, 0, glFormat, GL_UNSIGNED_BYTE, data); // TODO : modes (GL_RGB... stuff)
 		glGenerateMipmap(GL_TEXTURE_2D);
 	}
 	else
@@ -45,4 +46,14 @@ void Texture::Bind(unsigned int slot)
 void Texture::Unbind()
 {
 	glBindTexture(GL_TEXTURE_2D, 0);
+}
+
+GLint Texture::GetGLEnumForTextureFormat(Texture::TextureFormat format)
+{
+	switch (format)
+	{
+		case Texture::TextureFormat::RGB: return GL_RGB;
+		case Texture::TextureFormat::RGBA: return GL_RGBA;
+		default: return -1;
+	}
 }

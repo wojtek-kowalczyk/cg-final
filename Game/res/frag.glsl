@@ -11,10 +11,10 @@
 
 in vec3 FragmentPosInWorldSpace;
 in vec3 Normal;
+in vec2 UV;
 
 struct Material {
-    vec3 ambient; // these can be thought of as colors the object reflects from these types of light. or the colors of these lights.
-    vec3 diffuse;
+    sampler2D diffuse;
     vec3 specular;
     float shininess;
 };
@@ -33,12 +33,12 @@ uniform vec3 u_viewerPos;
 
 void main()
 {
-    vec3 ambient = u_light.ambient * u_mat.ambient;
+    vec3 ambient = u_light.ambient * texture(u_mat.diffuse, UV).rgb;
   	
     vec3 normal = normalize(Normal);
     vec3 lightDir = normalize(u_light.position - FragmentPosInWorldSpace);
     float diff = max(dot(normal, lightDir), 0.0);
-    vec3 diffuse = u_light.diffuse * (diff * u_mat.diffuse);
+    vec3 diffuse = u_light.diffuse * diff * texture(u_mat.diffuse, UV).rgb;
             
     vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
     vec3 reflectDir = reflect(-lightDir, normal);  

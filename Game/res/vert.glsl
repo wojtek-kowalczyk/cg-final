@@ -8,8 +8,6 @@ uniform mat4 u_m;
 uniform mat4 u_v;
 uniform mat4 u_p;
 
-uniform vec3 u_lightPos;
-
 out vec3 FragmentPosInWorldSpace;
 out vec3 Normal;
 out vec2 UV;

@@ -1,7 +1,7 @@
 #include "scene.h"
 #include "shader.h"
 #include "../consts.h"
-
+#include "texture.h"
 
 Scene::Scene(const std::weak_ptr<Camera>& camera) : m_camera(camera)
 {
@@ -56,8 +56,6 @@ void Scene::Render() const
 		shader.setMat4f("u_m", model);
 		
 		// material properties
-		shader.setVec3f("u_mat.ambient", glm::vec3(1.0f, 0.5f, 0.31f));
-		shader.setVec3f("u_mat.diffuse", glm::vec3(1.0f, 0.5f, 0.31f));
 		shader.setVec3f("u_mat.specular", glm::vec3(0.5, 0.5, 0.5));
 		shader.setFloat("u_mat.shininess", 32.0f);
 

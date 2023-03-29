@@ -13,6 +13,7 @@
 #include "core/primitives.h"
 #include "core/time.h"
 #include "core/scene.h"
+#include "core/texture.h"
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -83,11 +84,15 @@ int main()
 	
 	Timer frameTimer{};
 
+	Texture crateTex{ "res/textures/container2.png", Texture::TextureFormat::RGBA};
+	crateTex.Bind(0); // bind diffuse to slot 0
+
 	while (!glfwWindowShouldClose(window))
 	{
 		float deltaTime = frameTimer.Poll();
 		frameTimer.Start();
 
+		crateTex.Bind(0);
 		scene.Update(window, deltaTime);
 		scene.Render();
 		imguiRender(scene, deltaTime); 
@@ -104,6 +109,7 @@ int main()
 static void setupScene(Scene& scene)
 {
 	auto basicShader = std::make_shared<Shader>("res/vert.glsl", "res/frag.glsl");
+	basicShader->setInt("u_mat.diffuse", 0); // use tex slot zero for diffuse
 
 	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicShader);
 	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicShader);
@@ -118,12 +124,12 @@ static void setupScene(Scene& scene)
 	//obj1.Rotation = glm::vec3(0.0f, 45.0f, 0.0f);
 	//obj1.Scale = glm::vec3(0.3, 1.0, 1.0);
 
-	cube.Position = glm::vec3(+3.0f, 1.0f, -2.0f);
-	cube.Scale = glm::vec3(3.0f, 2.0f, 1.0f);
+	//cube.Position = glm::vec3(+3.0f, 1.0f, -2.0f);
+	//cube.Scale = glm::vec3(3.0f, 2.0f, 1.0f);
 
 	plane.Scale = glm::vec3(10.0f, 10.0f, 10.0f);
 
-	scene.AddObject(sphere);
+	//scene.AddObject(sphere);
 	scene.AddObject(cube);
 	scene.AddObject(plane);
 }

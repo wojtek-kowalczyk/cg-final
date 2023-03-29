@@ -7,48 +7,48 @@
 std::shared_ptr<Mesh> Primitives::Cube()
 {
 	float vertices[] = {
-	//positions				// normals
-	-0.5f, -0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	 0.5f, -0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	 0.5f,  0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	-0.5f,  0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	-0.5f, -0.5f, -0.5f,	 0.0f,  0.0f, -1.0f,
-	
-	-0.5f, -0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	 0.5f, -0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	 0.5f,  0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	-0.5f,  0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	-0.5f, -0.5f,  0.5f,	 0.0f,  0.0f, 1.0f,
-	
-	-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	-1.0f,  0.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,	-1.0f,  0.0f,  0.0f,
-	
-	 0.5f,  0.5f,  0.5f,	 1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,	 1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	 1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	 1.0f,  0.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	 1.0f,  0.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	 1.0f,  0.0f,  0.0f,
-	
-	-0.5f, -0.5f, -0.5f,	 0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f, -0.5f,	 0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	 0.0f, -1.0f,  0.0f,
-	 0.5f, -0.5f,  0.5f,	 0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f,  0.5f,	 0.0f, -1.0f,  0.0f,
-	-0.5f, -0.5f, -0.5f,	 0.0f, -1.0f,  0.0f,
-	
-	-0.5f,  0.5f, -0.5f,	 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f, -0.5f,	 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	 0.0f,  1.0f,  0.0f,
-	 0.5f,  0.5f,  0.5f,	 0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f,  0.5f,	 0.0f,  1.0f,  0.0f,
-	-0.5f,  0.5f, -0.5f,	 0.0f,  1.0f,  0.0f
+		// positions			  // normals			// texture coords
+		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
+		 0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
+
+		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
+
+		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+
+		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
+
+		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
+
+		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
+		-0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
+		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
 	};
 	
 	// This is stupid, but I wnat the mesh to be VBO+IBO not VBO only.
@@ -67,7 +67,6 @@ std::shared_ptr<Mesh> Primitives::Cube()
 		33,34,35,
 	};
 
-
 	static std::shared_ptr<Mesh> cube = nullptr;
 
 	if (!cube)
@@ -75,6 +74,7 @@ std::shared_ptr<Mesh> Primitives::Cube()
 		VertexBufferLayout layout;
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // normal
+		layout.Add(VertexBufferLayout::Element{ 2, GL_FLOAT }); // UVs
 
 		cube = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float),
 			indices, sizeof(indices) / sizeof(unsigned int), layout);
@@ -86,11 +86,11 @@ std::shared_ptr<Mesh> Primitives::Cube()
 std::shared_ptr<Mesh> Primitives::Plane()
 {
 	static constexpr float vertices[] = {
-		// positions			// normals
-		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,
-		+1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,
-		+1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,
-		-1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,
+		// positions			// normals			// UVs
+		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +0.0f,
+		+1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +0.0f,
+		+1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +1.0f,
+		-1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +1.0f,
 	};
 
 	static constexpr unsigned int indices[] = {
@@ -105,6 +105,7 @@ std::shared_ptr<Mesh> Primitives::Plane()
 		VertexBufferLayout layout;
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // normals
+		layout.Add(VertexBufferLayout::Element{ 2, GL_FLOAT }); // UVs
 
 		plane = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float),
 			indices, sizeof(indices) / sizeof(unsigned int), layout);
