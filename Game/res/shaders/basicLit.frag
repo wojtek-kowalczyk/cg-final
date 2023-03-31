@@ -54,7 +54,8 @@ struct SpotLight {
     vec3 specular;       
 };
 
-// TODO : how to pass this as uniform?
+// TODO : how to pass this as uniform? -> https://gamedev.stackexchange.com/questions/53822/variable-number-of-lights-in-a-glsl-shader
+// Apparently, I'll have to do with a set limit. 20? and if not filled limit then black
 #define NUM_POINT_LIGHTS 3
 
 uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
