@@ -63,8 +63,8 @@ void Scene::Render() const
 
 		shader.setVec3f("u_dirLight.direction", glm::vec3(0.0f, -1.0f, -1.0f));
 		//shader.setVec3f("u_dirLIght.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		shader.setVec3f("u_dirLIght.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		shader.setVec3f("u_dirLIght.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3f("u_dirLight.diffuse", glm::vec3(0.8f, 0.8f, 0.8f));
+		shader.setVec3f("u_dirLight.specular", glm::vec3(0.8f, 0.8f, 0.8f));
 
 		{
 			shader.setVec3f("u_pointLights[0].position", glm::vec3(-1.0f, 0.25f, 0.0f));
@@ -104,6 +104,17 @@ void Scene::Render() const
 			shader.setFloat("u_pointLights[2].linear", 0.09f);
 			shader.setFloat("u_pointLights[2].quadratic", 0.032f);
 		}
+
+		shader.setVec3f("u_spotLight.position", m_camera.lock()->Position);
+		shader.setVec3f("u_spotLight.direction", m_camera.lock()->Forward);
+
+		shader.setVec3f("u_spotLight.diffuse", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setVec3f("u_spotLight.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		shader.setFloat("u_spotLight.constant", 0.1f); // lower = brighter
+		shader.setFloat("u_spotLight.linear", 0.09f);
+		shader.setFloat("u_spotLight.quadratic", 0.032f);
+		shader.setFloat("u_spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+		shader.setFloat("u_spotLight.outerCutOff", glm::cos(glm::radians(15.0f)));
 
 		shader.setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f)); // for light bulb shader. 
 

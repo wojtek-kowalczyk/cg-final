@@ -39,17 +39,34 @@ struct DirLight {
     vec3 specular;
 };  
 
+struct SpotLight {
+    vec3 position;
+    vec3 direction;
+    float cutOff;
+    float outerCutOff;
+  
+    float constant;
+    float linear;
+    float quadratic;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;       
+};
+
 // TODO : how to pass this as uniform?
 #define NUM_POINT_LIGHTS 3
 
 uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
 uniform DirLight u_dirLight;
+uniform SpotLight u_spotLight;
 uniform Material u_mat;
 uniform vec3 u_viewerPos;
 
 // Function prototypes (just like in C)
 vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir); 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir); 
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
 
 void main()
 {
@@ -68,10 +85,12 @@ void main()
         outputColor += CalculatePointLight(u_pointLights[i], normal, viewDir);
     }
 
+    outputColor += CalculateSpotLight(u_spotLight, normal, viewDir); 
+
     gl_FragColor = vec4(outputColor, 1.0);
 }
 
-// TODO : get rid of duplicated code in there functions
+// TODO : get rid of duplicated code in these functions
 
 vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir) 
 {
@@ -102,4 +121,29 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir)
     specular *= attenuation;
 
     return diffuse + specular;
+}
+
+vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
+{
+    vec3 lightDir = normalize(light.position - FragmentPosInWorldSpace);
+    float diffuseStrength = max(dot(normal, lightDir), 0.0);
+    float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
+    
+    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;
+
+    float distance = length(light.position - FragmentPosInWorldSpace);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
+
+    diffuse *= attenuation;
+    specular *= attenuation;
+    
+    float theta = dot(lightDir, normalize(-light.direction)); 
+    float epsilon = light.cutOff - light.outerCutOff;
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0, 1.0);
+    
+    diffuse *= intensity;
+    specular *= intensity;
+    
+    return (diffuse + specular);
 }

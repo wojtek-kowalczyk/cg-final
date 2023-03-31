@@ -128,7 +128,6 @@ static void setupScene(Scene& scene)
 	Object pointLight1{ Primitives::Sphere(), lightMaterial };
 	Object pointLight2{ Primitives::Sphere(), lightMaterial };
 	Object pointLight3{ Primitives::Sphere(), lightMaterial };
-
 	
 	sphere.Position = glm::vec3(-2.0f, 0.5f, -1.0f);
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
