@@ -1432,7 +1432,8 @@
     <None Include="lib\glm\gtx\wrap.inl">
       <Filter>Header Files</Filter>
     </None>
-    <None Include="res\vert.glsl" />
-    <None Include="res\frag.glsl" />
+    <None Include="res\shaders\basic.vert" />
+    <None Include="res\shaders\basicLit.frag" />
+    <None Include="res\shaders\colorOnly.frag" />
   </ItemGroup>
 </Project>

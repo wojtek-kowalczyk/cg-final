@@ -109,26 +109,34 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	auto basicShader = std::make_shared<Shader>("res/vert.glsl", "res/frag.glsl");
-	basicShader->use();
-	basicShader->setInt("u_mat.diffuse", 0); // use tex slot zero for diffuse
-	basicShader->setInt("u_mat.specular", 1); // use tex slot one for diffuse
+	auto basicLitShader  = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basicLit.frag");
+	auto plainColorShader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/colorOnly.frag");
 
-	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicShader);
-	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicShader);
-	auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicShader);
+	basicLitShader->use();
+	basicLitShader->setInt("u_mat.diffuse", 0); // use tex slot zero for diffuse
+	basicLitShader->setInt("u_mat.specular", 1); // use tex slot one for diffuse
+
+	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicLitShader);
+	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader);
+	auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader);
+	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader);
 
 	// materials have no effect atm.
 	Object sphere{ Primitives::Sphere(), blue };
 	Object cube{ Primitives::Cube(), orange };
 	Object plane{ Primitives::Plane(), yellow }; 
+	Object pointLight{ Primitives::Sphere(), lightMaterial };
 
+	sphere.Position = glm::vec3(-2.0f, 0.5f, -1.0f);
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	plane.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
+	pointLight.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
+	pointLight.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
-	//scene.AddObject(sphere);
+	scene.AddObject(sphere);
 	scene.AddObject(cube);
 	scene.AddObject(plane);
+	scene.AddObject(pointLight);
 }
 
 static void cleanupWindow(GLFWwindow* window)

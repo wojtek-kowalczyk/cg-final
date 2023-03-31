@@ -21,9 +21,14 @@ struct Material {
 
 struct Light {
     vec3 position;
+
     vec3 ambient;
     vec3 diffuse;
     vec3 specular;
+
+    float constant;
+    float linear;
+    float quadratic;
 };
 
 uniform Material u_mat;
@@ -44,7 +49,14 @@ void main()
     vec3 reflectDir = reflect(-lightDir, normal);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_mat.shininess);
     vec3 specular = u_light.specular * spec * texture(u_mat.specular, UV).rgb;  
-        
+    
+    float distance    = length(u_light.position - FragmentPosInWorldSpace);
+    float attenuation = 1.0 / (u_light.constant + u_light.linear * distance + 
+        u_light.quadratic * (distance * distance)); 
+
+    ambient *= attenuation;
+    diffuse *= attenuation;
+    specular *= attenuation;
+
     gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
-    //gl_FragColor = vec4(ambient + diffuse, 1.0);
 }

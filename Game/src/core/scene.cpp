@@ -54,14 +54,24 @@ void Scene::Render() const
 		shader.setMat4f("u_v", view); 
 		shader.setMat4f("u_p", projection);
 		shader.setMat4f("u_m", model);
+
+		// TODO : vertex shader is common, but there are different fragment shaders. these should be setup somewhere else.
+		// to my surprise there are no errors
 		
 		// material properties
 		shader.setFloat("u_mat.shininess", 128.0f);
 
+		shader.setVec3f("u_light.position", glm::vec3(-1.0f, 0.25f, 0.0f));
+
 		shader.setVec3f("u_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		shader.setVec3f("u_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.setVec3f("u_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		shader.setVec3f("u_light.position", glm::vec3(-5, 5, -5));
+
+		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+		shader.setFloat("u_light.constant", 0.25f); // lower = brighter
+		shader.setFloat("u_light.linear", 0.09f); 
+		shader.setFloat("u_light.quadratic", 0.032f);
+		shader.setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
 
