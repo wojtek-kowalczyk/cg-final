@@ -56,13 +56,12 @@ void Scene::Render() const
 		shader.setMat4f("u_m", model);
 		
 		// material properties
-		shader.setVec3f("u_mat.specular", glm::vec3(0.5, 0.5, 0.5));
-		shader.setFloat("u_mat.shininess", 32.0f);
+		shader.setFloat("u_mat.shininess", 128.0f);
 
 		shader.setVec3f("u_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		shader.setVec3f("u_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.setVec3f("u_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
-		shader.setVec3f("u_light.position", glm::vec3(5, 5, 5));
+		shader.setVec3f("u_light.position", glm::vec3(-5, 5, -5));
 
 		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
 

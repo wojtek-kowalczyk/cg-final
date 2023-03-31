@@ -15,7 +15,7 @@ in vec2 UV;
 
 struct Material {
     sampler2D diffuse;
-    vec3 specular;
+    sampler2D specular;
     float shininess;
 };
 
@@ -43,7 +43,8 @@ void main()
     vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
     vec3 reflectDir = reflect(-lightDir, normal);  
     float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_mat.shininess);
-    vec3 specular = u_light.specular * (spec * u_mat.specular);  
+    vec3 specular = u_light.specular * spec * texture(u_mat.specular, UV).rgb;  
         
     gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+    //gl_FragColor = vec4(ambient + diffuse, 1.0);
 }
