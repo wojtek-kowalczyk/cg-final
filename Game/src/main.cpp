@@ -112,7 +112,7 @@ static void setupScene(Scene& scene)
 	auto basicShader = std::make_shared<Shader>("res/vert.glsl", "res/frag.glsl");
 	basicShader->use();
 	basicShader->setInt("u_mat.diffuse", 0); // use tex slot zero for diffuse
-	basicShader->setInt("u_mat.specular", 1); // use tex slot zero for diffuse
+	basicShader->setInt("u_mat.specular", 1); // use tex slot one for diffuse
 
 	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicShader);
 	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicShader);
