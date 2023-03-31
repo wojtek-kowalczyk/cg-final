@@ -8,8 +8,8 @@
 class Timer
 {
 public:
-	void Start() { m_startTime = glfwGetTime(); }
-	float Poll() const { return glfwGetTime() - m_startTime; }
+	void Start() { m_startTime = static_cast<float>(glfwGetTime()); }
+	float Poll() const { return static_cast<float>(glfwGetTime()) - m_startTime; }
 
 private:
 	float m_startTime;

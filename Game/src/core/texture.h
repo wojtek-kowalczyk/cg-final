@@ -16,7 +16,7 @@ public:
 	Texture(const std::string& path, Texture::TextureFormat format);
 	~Texture();
 
-	void Bind(unsigned int slot = 0);
+	void Bind(unsigned int slot);
 	void Unbind();
 	unsigned int Id() const { return m_rendererId; }
 

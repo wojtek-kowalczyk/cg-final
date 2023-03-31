@@ -61,6 +61,9 @@ static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn);
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 static void setupScene(Scene& scene);
+static void setupDirectionalLight(Scene& scene);
+static void setupSpotlight(Scene& scene);
+static void setupPointLights(Scene& scene);
 
 // how should be object handles like VertexBuffer or shader handled? should they be stack or hep allocated? Shader is just one int...
 
@@ -84,16 +87,12 @@ int main()
 	
 	Timer frameTimer{};
 
-	Texture diffuseTex{ "res/textures/container2.png", Texture::TextureFormat::RGBA };
-	Texture specularTex{ "res/textures/container2_specular.png", Texture::TextureFormat::RGBA };
 
 	while (!glfwWindowShouldClose(window))
 	{
 		float deltaTime = frameTimer.Poll();
 		frameTimer.Start();
 
-		diffuseTex.Bind(0);
-		specularTex.Bind(1);
 		scene.Update(window, deltaTime);
 		scene.Render();
 		imguiRender(scene, deltaTime); 
@@ -109,22 +108,34 @@ int main()
 
 static void setupScene(Scene& scene)
 {
+	auto diffuseTex = std::make_shared<Texture>("res/textures/container2.png", Texture::TextureFormat::RGBA);
+	auto specularTex = std::make_shared<Texture>("res/textures/container2_specular.png", Texture::TextureFormat::RGBA);
+	auto plainTex = std::make_shared<Texture>("res/textures/defaultTex.png", Texture::TextureFormat::RGBA);
+
 	auto basicLitShader  = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basicLit.frag");
 	auto plainColorShader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/colorOnly.frag");
+	
+	// TODO : vertex shader is common, but there are different fragment shaders. these should be setup somewhere else.
+	// to my surprise there are no errors
+	plainColorShader->use();
+	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f)); // for light bulb shader. TODO : figure out shader separation
 
-	basicLitShader->use();
-	basicLitShader->setInt("u_mat.diffuse", 0); // use tex slot zero for diffuse
-	basicLitShader->setInt("u_mat.specular", 1); // use tex slot one for diffuse
+	// TODO : before rendering, I have to bind diffuse texture to slot 1, specular texture to slot 2
+	// TODO : get rid of magic numbers for these tex slots.
 
-	auto blue	= std::make_shared<Material>(glm::vec3(0.2f, 0.3f, 0.8f), basicLitShader);
-	auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader);
-	auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader);
-	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader);
+	auto white    = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
+	//auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader, diffuseTex, specularTex, 128.0f);
+	//auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
+	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, plainTex, plainTex, 128.0f);
+
+	setupDirectionalLight(scene);
+	setupSpotlight(scene);
+	setupPointLights(scene);
 
 	// materials have no effect atm.
-	Object sphere{ Primitives::Sphere(), blue };
-	Object cube{ Primitives::Cube(), orange };
-	Object plane{ Primitives::Plane(), yellow }; 
+	Object sphere{ Primitives::Sphere(), white };
+	Object cube{ Primitives::Cube(), white };
+	Object plane{ Primitives::Plane(), white };
 	Object pointLight1{ Primitives::Sphere(), lightMaterial };
 	Object pointLight2{ Primitives::Sphere(), lightMaterial };
 	Object pointLight3{ Primitives::Sphere(), lightMaterial };
@@ -133,6 +144,7 @@ static void setupScene(Scene& scene)
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	plane.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
 
+	// sync positions to actual point lights position
 	pointLight1.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
 	pointLight1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	
@@ -148,6 +160,70 @@ static void setupScene(Scene& scene)
 	scene.AddObject(pointLight1);
 	scene.AddObject(pointLight2);
 	scene.AddObject(pointLight3);
+}
+
+static void setupDirectionalLight(Scene& scene)
+{
+	DirectionalLight directionalLight;
+	directionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight.direction = glm::vec3(0.0f, -1.0f, -1.0f);
+	scene.SetDirectionalLight(directionalLight);
+}
+
+static void setupSpotlight(Scene& scene)
+{
+	SpotLight spotlight;
+	spotlight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	spotlight.constant = 0.1f; // lower = brighter
+	spotlight.linear = 0.09f;
+	spotlight.quadratic = 0.032f;
+	spotlight.cutOff = glm::cos(glm::radians(12.5f));
+	spotlight.outerCutOff = glm::cos(glm::radians(15.0f));
+	scene.SetSpotLight(spotlight);
+}
+
+static void setupPointLights(Scene& scene)
+{
+	{
+		PointLight light;
+
+		light.position = glm::vec3(-1.0f, 0.25f, 0.0f);
+		light.color = glm::vec3(1.0f, 0.0f, 0.0f) * 0.5f;
+		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+		light.constant = 0.2f;
+		light.linear = 0.09f;
+		light.quadratic = 0.032f;
+
+		scene.AddPointLight(light);
+	}
+
+	{
+		PointLight light;
+
+		light.position = glm::vec3(-3.0f, 0.5f, 1.0f);
+		light.color = glm::vec3(1.0f, 0.0f, 1.0f) * 0.5f;
+		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+		light.constant = 0.2f;
+		light.linear = 0.09f;
+		light.quadratic = 0.032f;
+
+		scene.AddPointLight(light);
+	}
+
+	// TODO : fix directional light -> test if working correctly. Reduce point light intensity.
+
+	{
+		PointLight light;
+
+		light.position = glm::vec3(+1.5f, 0.35f, -1.0f);
+		light.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.5f;
+		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+		light.constant = 0.2f;
+		light.linear = 0.09f;
+		light.quadratic = 0.032f;
+
+		scene.AddPointLight(light);
+	}
 }
 
 static void cleanupWindow(GLFWwindow* window)

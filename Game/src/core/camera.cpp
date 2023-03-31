@@ -1,4 +1,5 @@
 #include "camera.h"
+#include "consts.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	: Forward(glm::vec3(0.0f, 0.0f, -1.0f)),
@@ -20,16 +21,15 @@ glm::mat4 Camera::GetViewMatrix() const
 
 glm::mat4 Camera::GetProjectionMatrix() const
 {
-	// TODO : should camera handle this?
-	//return glm::perspective(glm::radians(Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f)
-	return glm::mat4(1.0f);
+	// TODO : using consts here makes the screen not resizeable. this should read values from window (or get them)
+	return glm::perspective(glm::radians(Zoom), (float)Consts::SCREEN_WIDTH / (float)Consts::SCREEN_HEIGHT, 0.1f, 100.0f);
 }
 
 void Camera::LookAt(glm::vec3 target)
 {
-	glm::vec3 newFront = glm::normalize(target - Position); // TODO : front should Actually be called forward in my opinion
-	Pitch = glm::degrees(asinf(newFront.z));
-	Yaw = glm::degrees(atan2f(newFront.y, newFront.x));
+	glm::vec3 newForward = glm::normalize(target - Position);
+	Pitch = glm::degrees(asinf(newForward.z));
+	Yaw = glm::degrees(atan2f(newForward.y, newForward.x));
 	updateCameraVectors();
 }
 
@@ -85,7 +85,6 @@ void Camera::ProcessMouseMovement(float xoffset, float yoffset, bool constrainPi
 			Pitch = -89.0f;
 	}
 
-	// update Front, Right and Up Vectors using the updated Euler angles
 	updateCameraVectors();
 }
 
@@ -103,7 +102,6 @@ void Camera::ProcessMouseScroll(float yoffset)
 
 void Camera::updateCameraVectors()
 {
-	// TODO : extract into transform component?
 	glm::vec3 front;
 	front.x = cos(glm::radians(Yaw)) * cos(glm::radians(Pitch));
 	front.y = sin(glm::radians(Pitch));

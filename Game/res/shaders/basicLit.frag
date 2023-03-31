@@ -14,6 +14,7 @@ in vec3 Normal;
 in vec2 UV;
 
 struct Material {
+    vec3 albedo;
     sampler2D diffuse;
     sampler2D specular;
     float shininess;
@@ -21,10 +22,7 @@ struct Material {
 
 struct PointLight {
     vec3 position;
-
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 color;
 
     float constant;
     float linear;
@@ -33,36 +31,31 @@ struct PointLight {
 
 struct DirLight {
     vec3 direction;
-  
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;
+    vec3 color;
 };  
 
 struct SpotLight {
     vec3 position;
     vec3 direction;
+    vec3 color;
+
     float cutOff;
     float outerCutOff;
-  
     float constant;
     float linear;
     float quadratic;
-  
-    vec3 ambient;
-    vec3 diffuse;
-    vec3 specular;       
 };
 
-// TODO : how to pass this as uniform? -> https://gamedev.stackexchange.com/questions/53822/variable-number-of-lights-in-a-glsl-shader
-// Apparently, I'll have to do with a set limit. 20? and if not filled limit then black
-#define NUM_POINT_LIGHTS 3
+#define NUM_POINT_LIGHTS 20
 
-uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
-uniform DirLight u_dirLight;
-uniform SpotLight u_spotLight;
 uniform Material u_mat;
+uniform DirLight u_dirLight;
+uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
+uniform SpotLight u_spotLight;
+uniform vec3 u_ambientLight;
+
 uniform vec3 u_viewerPos;
+uniform int u_numLights; // if more than #defined - the excess will be ignored
 
 // Function prototypes (just like in C)
 vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir); 
@@ -73,20 +66,22 @@ void main()
 {
     vec3 outputColor = vec3(0.0);
 
-    // TODO : I think I wanna keep ambient light separate from light sources and be a property of a scene.
-    vec3 ambient = vec3(0.15, 0.15, 0.15) * texture(u_mat.diffuse, UV).rgb;
+    vec3 ambient = u_ambientLight * texture(u_mat.diffuse, UV).rgb;
 
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
 
     outputColor += CalculateDirectionalLight(u_dirLight, normal, viewDir);
 
-    for (int i = 0; i < NUM_POINT_LIGHTS; i++) 
+    for (int i = 0; i < min(u_numLights, NUM_POINT_LIGHTS); i++) // TODO : fix out of bounds access
     {
         outputColor += CalculatePointLight(u_pointLights[i], normal, viewDir);
     }
 
+    // TODO : multiple? eg. street lights, or car?
     outputColor += CalculateSpotLight(u_spotLight, normal, viewDir); 
+
+    outputColor *= u_mat.albedo;
 
     gl_FragColor = vec4(outputColor, 1.0);
 }
@@ -99,8 +94,8 @@ vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir)
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
     float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
 
-    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
-    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;  
+    vec3 diffuse = light.color * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.color * specularStrength * texture(u_mat.specular, UV).rgb;  
 
     return diffuse + specular;
 }
@@ -111,8 +106,8 @@ vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir)
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
     float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
     
-    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
-    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;  
+    vec3 diffuse = light.color * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.color* specularStrength * texture(u_mat.specular, UV).rgb;  
 
     float distance    = length(light.position - FragmentPosInWorldSpace);
     float attenuation = 1.0 / (light.constant + light.linear * distance + 
@@ -130,8 +125,8 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     float diffuseStrength = max(dot(normal, lightDir), 0.0);
     float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
     
-    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
-    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;
+    vec3 diffuse = light.color * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.color * specularStrength * texture(u_mat.specular, UV).rgb;
 
     float distance = length(light.position - FragmentPosInWorldSpace);
     float attenuation = 1.0 / (light.constant + light.linear * distance + light.quadratic * (distance * distance));    
@@ -146,5 +141,5 @@ vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir)
     diffuse *= intensity;
     specular *= intensity;
     
-    return (diffuse + specular);
+    return max(vec3(0.0), diffuse + specular);
 }
