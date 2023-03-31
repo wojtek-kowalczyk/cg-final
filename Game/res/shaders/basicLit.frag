@@ -20,7 +20,8 @@ struct Material {
 };
 
 struct Light {
-    vec3 position;
+    vec3 position; // point light // TODO : multiple lights
+    vec3 direction; // directional light // TODO : split somehow?
 
     vec3 ambient;
     vec3 diffuse;
@@ -41,13 +42,15 @@ void main()
     vec3 ambient = u_light.ambient * texture(u_mat.diffuse, UV).rgb;
   	
     vec3 normal = normalize(Normal);
-    vec3 lightDir = normalize(u_light.position - FragmentPosInWorldSpace);
-    float diff = max(dot(normal, lightDir), 0.0);
+    vec3 lightDir_toPoint = normalize(u_light.position - FragmentPosInWorldSpace);
+    vec3 lightDir_toDirectional = normalize(-u_light.direction);
+    float diff = max(dot(normal, lightDir_toPoint), 0.0);
+    diff += max(dot(normal, lightDir_toDirectional), 0.0);
     vec3 diffuse = u_light.diffuse * diff * texture(u_mat.diffuse, UV).rgb;
             
     vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
-    vec3 reflectDir = reflect(-lightDir, normal);  
-    float spec = pow(max(dot(viewDir, reflectDir), 0.0), u_mat.shininess);
+    float spec = pow(max(dot(viewDir, reflect(-lightDir_toPoint, normal)), 0.0), u_mat.shininess);
+    spec += pow(max(dot(viewDir, reflect(-lightDir_toDirectional, normal)), 0.0), u_mat.shininess);
     vec3 specular = u_light.specular * spec * texture(u_mat.specular, UV).rgb;  
     
     float distance    = length(u_light.position - FragmentPosInWorldSpace);

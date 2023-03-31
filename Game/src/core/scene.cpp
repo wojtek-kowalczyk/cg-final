@@ -62,13 +62,15 @@ void Scene::Render() const
 		shader.setFloat("u_mat.shininess", 128.0f);
 
 		shader.setVec3f("u_light.position", glm::vec3(-1.0f, 0.25f, 0.0f));
+		// right now the directional light has the same parameters as the point light.
+		shader.setVec3f("u_light.direction", glm::vec3(0.0f, -1.0f, -1.0f));
 
 		shader.setVec3f("u_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
 		shader.setVec3f("u_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
 		shader.setVec3f("u_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
-		shader.setFloat("u_light.constant", 0.25f); // lower = brighter
+		shader.setFloat("u_light.constant", 0.2f); // lower = brighter
 		shader.setFloat("u_light.linear", 0.09f); 
 		shader.setFloat("u_light.quadratic", 0.032f);
 		shader.setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
