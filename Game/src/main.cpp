@@ -125,18 +125,30 @@ static void setupScene(Scene& scene)
 	Object sphere{ Primitives::Sphere(), blue };
 	Object cube{ Primitives::Cube(), orange };
 	Object plane{ Primitives::Plane(), yellow }; 
-	Object pointLight{ Primitives::Sphere(), lightMaterial };
+	Object pointLight1{ Primitives::Sphere(), lightMaterial };
+	Object pointLight2{ Primitives::Sphere(), lightMaterial };
+	Object pointLight3{ Primitives::Sphere(), lightMaterial };
 
+	
 	sphere.Position = glm::vec3(-2.0f, 0.5f, -1.0f);
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	plane.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
-	pointLight.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
-	pointLight.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+
+	pointLight1.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
+	pointLight1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	
+	pointLight2.Position = glm::vec3(-3.0f, 0.5f, 1.0f);
+	pointLight2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	
+	pointLight3.Position = glm::vec3(+1.5f, 0.35f, -1.0f);
+	pointLight3.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	scene.AddObject(sphere);
 	scene.AddObject(cube);
 	scene.AddObject(plane);
-	scene.AddObject(pointLight);
+	scene.AddObject(pointLight1);
+	scene.AddObject(pointLight2);
+	scene.AddObject(pointLight3);
 }
 
 static void cleanupWindow(GLFWwindow* window)

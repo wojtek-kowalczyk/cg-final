@@ -19,9 +19,8 @@ struct Material {
     float shininess;
 };
 
-struct Light {
-    vec3 position; // point light // TODO : multiple lights
-    vec3 direction; // directional light // TODO : split somehow?
+struct PointLight {
+    vec3 position;
 
     vec3 ambient;
     vec3 diffuse;
@@ -32,34 +31,75 @@ struct Light {
     float quadratic;
 };
 
-uniform Material u_mat;
-uniform Light u_light; 
+struct DirLight {
+    vec3 direction;
+  
+    vec3 ambient;
+    vec3 diffuse;
+    vec3 specular;
+};  
 
+// TODO : how to pass this as uniform?
+#define NUM_POINT_LIGHTS 3
+
+uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
+uniform DirLight u_dirLight;
+uniform Material u_mat;
 uniform vec3 u_viewerPos;
+
+// Function prototypes (just like in C)
+vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir); 
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir); 
 
 void main()
 {
-    vec3 ambient = u_light.ambient * texture(u_mat.diffuse, UV).rgb;
-  	
-    vec3 normal = normalize(Normal);
-    vec3 lightDir_toPoint = normalize(u_light.position - FragmentPosInWorldSpace);
-    vec3 lightDir_toDirectional = normalize(-u_light.direction);
-    float diff = max(dot(normal, lightDir_toPoint), 0.0);
-    diff += max(dot(normal, lightDir_toDirectional), 0.0);
-    vec3 diffuse = u_light.diffuse * diff * texture(u_mat.diffuse, UV).rgb;
-            
-    vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
-    float spec = pow(max(dot(viewDir, reflect(-lightDir_toPoint, normal)), 0.0), u_mat.shininess);
-    spec += pow(max(dot(viewDir, reflect(-lightDir_toDirectional, normal)), 0.0), u_mat.shininess);
-    vec3 specular = u_light.specular * spec * texture(u_mat.specular, UV).rgb;  
-    
-    float distance    = length(u_light.position - FragmentPosInWorldSpace);
-    float attenuation = 1.0 / (u_light.constant + u_light.linear * distance + 
-        u_light.quadratic * (distance * distance)); 
+    vec3 outputColor = vec3(0.0);
 
-    ambient *= attenuation;
+    // TODO : I think I wanna keep ambient light separate from light sources and be a property of a scene.
+    vec3 ambient = vec3(0.15, 0.15, 0.15) * texture(u_mat.diffuse, UV).rgb;
+
+    vec3 normal = normalize(Normal);
+    vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
+
+    outputColor += CalculateDirectionalLight(u_dirLight, normal, viewDir);
+
+    for (int i = 0; i < NUM_POINT_LIGHTS; i++) 
+    {
+        outputColor += CalculatePointLight(u_pointLights[i], normal, viewDir);
+    }
+
+    gl_FragColor = vec4(outputColor, 1.0);
+}
+
+// TODO : get rid of duplicated code in there functions
+
+vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir) 
+{
+    vec3 lightDir = normalize(-light.direction);
+    float diffuseStrength = max(dot(normal, lightDir), 0.0);
+    float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
+
+    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;  
+
+    return diffuse + specular;
+}
+
+vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir) 
+{
+    vec3 lightDir = normalize(light.position - FragmentPosInWorldSpace);
+    float diffuseStrength = max(dot(normal, lightDir), 0.0);
+    float specularStrength = pow(max(dot(viewDir, reflect(-lightDir, normal)), 0.0), u_mat.shininess);
+    
+    vec3 diffuse = light.diffuse * diffuseStrength * texture(u_mat.diffuse, UV).rgb;
+    vec3 specular = light.specular * specularStrength * texture(u_mat.specular, UV).rgb;  
+
+    float distance    = length(light.position - FragmentPosInWorldSpace);
+    float attenuation = 1.0 / (light.constant + light.linear * distance + 
+        light.quadratic * (distance * distance)); 
+
     diffuse *= attenuation;
     specular *= attenuation;
 
-    gl_FragColor = vec4(ambient + diffuse + specular, 1.0);
+    return diffuse + specular;
 }

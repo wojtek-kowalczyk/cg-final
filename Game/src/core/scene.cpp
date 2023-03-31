@@ -61,19 +61,51 @@ void Scene::Render() const
 		// material properties
 		shader.setFloat("u_mat.shininess", 128.0f);
 
-		shader.setVec3f("u_light.position", glm::vec3(-1.0f, 0.25f, 0.0f));
-		// right now the directional light has the same parameters as the point light.
-		shader.setVec3f("u_light.direction", glm::vec3(0.0f, -1.0f, -1.0f));
+		shader.setVec3f("u_dirLight.direction", glm::vec3(0.0f, -1.0f, -1.0f));
+		//shader.setVec3f("u_dirLIght.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+		shader.setVec3f("u_dirLIght.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+		shader.setVec3f("u_dirLIght.specular", glm::vec3(1.0f, 1.0f, 1.0f));
 
-		shader.setVec3f("u_light.ambient", glm::vec3(0.2f, 0.2f, 0.2f));
-		shader.setVec3f("u_light.diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
-		shader.setVec3f("u_light.specular", glm::vec3(1.0f, 1.0f, 1.0f));
+		{
+			shader.setVec3f("u_pointLights[0].position", glm::vec3(-1.0f, 0.25f, 0.0f));
 
-		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
-		shader.setFloat("u_light.constant", 0.2f); // lower = brighter
-		shader.setFloat("u_light.linear", 0.09f); 
-		shader.setFloat("u_light.quadratic", 0.032f);
-		shader.setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
+			shader.setVec3f("u_pointLights[0].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+			shader.setVec3f("u_pointLights[0].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+			shader.setVec3f("u_pointLights[0].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+			// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+			shader.setFloat("u_pointLights[0].constant", 0.2f); // lower = brighter
+			shader.setFloat("u_pointLights[0].linear", 0.09f); 
+			shader.setFloat("u_pointLights[0].quadratic", 0.032f);
+		}
+
+		{
+			shader.setVec3f("u_pointLights[1].position", glm::vec3(-3.0f, 0.5f, 1.0f));
+										   
+			shader.setVec3f("u_pointLights[1].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+			shader.setVec3f("u_pointLights[1].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+			shader.setVec3f("u_pointLights[1].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+										   
+			// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+			shader.setFloat("u_pointLights[1].constant", 0.2f); // lower = brighter
+			shader.setFloat("u_pointLights[1].linear", 0.09f);
+			shader.setFloat("u_pointLights[1].quadratic", 0.032f);
+		}
+
+		{
+			shader.setVec3f("u_pointLights[2].position", glm::vec3(+1.5f, 0.35f, -1.0f));
+
+			shader.setVec3f("u_pointLights[2].ambient", glm::vec3(0.2f, 0.2f, 0.2f));
+			shader.setVec3f("u_pointLights[2].diffuse", glm::vec3(0.5f, 0.5f, 0.5f));
+			shader.setVec3f("u_pointLights[2].specular", glm::vec3(1.0f, 1.0f, 1.0f));
+
+			// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+			shader.setFloat("u_pointLights[2].constant", 0.2f); // lower = brighter
+			shader.setFloat("u_pointLights[2].linear", 0.09f);
+			shader.setFloat("u_pointLights[2].quadratic", 0.032f);
+		}
+
+		shader.setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f)); // for light bulb shader. 
 
 		shader.setVec3f("u_viewerPos", m_camera.lock()->Position); // TODO : where does the shared ptr we create by calling .lock() go out of scope?
 
