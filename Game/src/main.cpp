@@ -87,7 +87,6 @@ int main()
 	
 	Timer frameTimer{};
 
-
 	while (!glfwWindowShouldClose(window))
 	{
 		float deltaTime = frameTimer.Poll();
@@ -115,24 +114,18 @@ static void setupScene(Scene& scene)
 	auto basicLitShader  = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basicLit.frag");
 	auto plainColorShader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/colorOnly.frag");
 	
-	// TODO : vertex shader is common, but there are different fragment shaders. these should be setup somewhere else.
-	// to my surprise there are no errors
 	plainColorShader->use();
-	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f)); // for light bulb shader. TODO : figure out shader separation
-
-	// TODO : before rendering, I have to bind diffuse texture to slot 1, specular texture to slot 2
-	// TODO : get rid of magic numbers for these tex slots.
+	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
 	auto white    = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
 	//auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader, diffuseTex, specularTex, 128.0f);
 	//auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
-	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, plainTex, plainTex, 128.0f);
+	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, nullptr, nullptr, 0.0f);
 
 	setupDirectionalLight(scene);
 	setupSpotlight(scene);
 	setupPointLights(scene);
 
-	// materials have no effect atm.
 	Object sphere{ Primitives::Sphere(), white };
 	Object cube{ Primitives::Cube(), white };
 	Object plane{ Primitives::Plane(), white };

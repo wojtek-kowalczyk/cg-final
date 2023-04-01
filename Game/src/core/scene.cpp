@@ -70,8 +70,10 @@ void Scene::Render() const
 		shader.setMat4f("u_p", projection);
 		shader.setMat4f("u_m", model);
 
-		object.m_material->DiffuseMap->Bind(0);
-		object.m_material->SpecularMap->Bind(1);
+		if (object.m_material->DiffuseMap != nullptr)
+			object.m_material->DiffuseMap->Bind(0);
+		if (object.m_material->SpecularMap != nullptr)
+			object.m_material->SpecularMap->Bind(1);
 
 		shader.setFloat("u_mat.shininess", object.m_material->Shininess);
 		shader.setVec3f("u_mat.albedo", object.m_material->Albedo);
