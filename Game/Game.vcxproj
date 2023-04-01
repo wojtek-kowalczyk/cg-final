@@ -85,13 +85,13 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\;src;</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\;src;;$(ProjectDir)lib\assimp\include\</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <OutDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\</OutDir>
     <IntDir>$(ProjectDir)bin\$(Platform)\$(Configuration)\intermediates\</IntDir>
-    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\</IncludePath>
+    <IncludePath>$(VC_IncludePath);$(WindowsSDK_IncludePath);$(ProjectDir)lib\;$(ProjectDir)lib\GLFW\include\;;$(ProjectDir)lib\assimp\include\</IncludePath>
     <LibraryPath>$(VC_LibraryPath_x64);$(WindowsSDK_LibraryPath_x64);</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -146,8 +146,8 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)lib\GLFW\bin\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\GLFW\bin\;$(ProjectDir)lib\assimp\bin\;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -168,8 +168,8 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>$(ProjectDir)lib\GLFW\bin\</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;</AdditionalDependencies>
+      <AdditionalLibraryDirectories>$(ProjectDir)lib\GLFW\bin\;$(ProjectDir)lib\assimp\bin\;</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -200,6 +200,89 @@
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="lib\assimp\include\assimp\aabb.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ai_assert.h" />
+    <ClInclude Include="lib\assimp\include\assimp\anim.h" />
+    <ClInclude Include="lib\assimp\include\assimp\AssertHandler.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Base64.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\BaseImporter.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Bitmap.h" />
+    <ClInclude Include="lib\assimp\include\assimp\BlobIOSystem.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ByteSwapper.h" />
+    <ClInclude Include="lib\assimp\include\assimp\camera.h" />
+    <ClInclude Include="lib\assimp\include\assimp\cexport.h" />
+    <ClInclude Include="lib\assimp\include\assimp\cfileio.h" />
+    <ClInclude Include="lib\assimp\include\assimp\cimport.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ColladaMetaData.h" />
+    <ClInclude Include="lib\assimp\include\assimp\color4.h" />
+    <ClInclude Include="lib\assimp\include\assimp\commonMetaData.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Compiler\poppack1.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Compiler\pstdint.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Compiler\pushpack1.h" />
+    <ClInclude Include="lib\assimp\include\assimp\config.h" />
+    <ClInclude Include="lib\assimp\include\assimp\CreateAnimMesh.h" />
+    <ClInclude Include="lib\assimp\include\assimp\DefaultIOStream.h" />
+    <ClInclude Include="lib\assimp\include\assimp\DefaultIOSystem.h" />
+    <ClInclude Include="lib\assimp\include\assimp\DefaultLogger.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\defs.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Exceptional.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Exporter.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\fast_atof.h" />
+    <ClInclude Include="lib\assimp\include\assimp\GenericProperty.h" />
+    <ClInclude Include="lib\assimp\include\assimp\GltfMaterial.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Hash.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Importer.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\importerdesc.h" />
+    <ClInclude Include="lib\assimp\include\assimp\IOStream.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\IOStreamBuffer.h" />
+    <ClInclude Include="lib\assimp\include\assimp\IOSystem.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\light.h" />
+    <ClInclude Include="lib\assimp\include\assimp\LineSplitter.h" />
+    <ClInclude Include="lib\assimp\include\assimp\LogAux.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Logger.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\LogStream.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\material.h" />
+    <ClInclude Include="lib\assimp\include\assimp\MathFunctions.h" />
+    <ClInclude Include="lib\assimp\include\assimp\matrix3x3.h" />
+    <ClInclude Include="lib\assimp\include\assimp\matrix4x4.h" />
+    <ClInclude Include="lib\assimp\include\assimp\MemoryIOWrapper.h" />
+    <ClInclude Include="lib\assimp\include\assimp\mesh.h" />
+    <ClInclude Include="lib\assimp\include\assimp\metadata.h" />
+    <ClInclude Include="lib\assimp\include\assimp\NullLogger.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\ObjMaterial.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ParsingUtils.h" />
+    <ClInclude Include="lib\assimp\include\assimp\pbrmaterial.h" />
+    <ClInclude Include="lib\assimp\include\assimp\port\AndroidJNI\AndroidJNIIOSystem.h" />
+    <ClInclude Include="lib\assimp\include\assimp\port\AndroidJNI\BundledAssetIOSystem.h" />
+    <ClInclude Include="lib\assimp\include\assimp\postprocess.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Profiler.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ProgressHandler.hpp" />
+    <ClInclude Include="lib\assimp\include\assimp\qnan.h" />
+    <ClInclude Include="lib\assimp\include\assimp\quaternion.h" />
+    <ClInclude Include="lib\assimp\include\assimp\RemoveComments.h" />
+    <ClInclude Include="lib\assimp\include\assimp\scene.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SceneCombiner.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SGSpatialSort.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SkeletonMeshBuilder.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SmallVector.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SmoothingGroups.h" />
+    <ClInclude Include="lib\assimp\include\assimp\SpatialSort.h" />
+    <ClInclude Include="lib\assimp\include\assimp\StandardShapes.h" />
+    <ClInclude Include="lib\assimp\include\assimp\StreamReader.h" />
+    <ClInclude Include="lib\assimp\include\assimp\StreamWriter.h" />
+    <ClInclude Include="lib\assimp\include\assimp\StringComparison.h" />
+    <ClInclude Include="lib\assimp\include\assimp\StringUtils.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Subdivision.h" />
+    <ClInclude Include="lib\assimp\include\assimp\texture.h" />
+    <ClInclude Include="lib\assimp\include\assimp\TinyFormatter.h" />
+    <ClInclude Include="lib\assimp\include\assimp\types.h" />
+    <ClInclude Include="lib\assimp\include\assimp\vector2.h" />
+    <ClInclude Include="lib\assimp\include\assimp\vector3.h" />
+    <ClInclude Include="lib\assimp\include\assimp\version.h" />
+    <ClInclude Include="lib\assimp\include\assimp\Vertex.h" />
+    <ClInclude Include="lib\assimp\include\assimp\XmlParser.h" />
+    <ClInclude Include="lib\assimp\include\assimp\XMLTools.h" />
+    <ClInclude Include="lib\assimp\include\assimp\ZipArchiveIOSystem.h" />
     <ClInclude Include="lib\glad\glad.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3.h" />
     <ClInclude Include="lib\GLFW\include\GLFW\glfw3native.h" />
@@ -513,6 +596,15 @@
     <ClInclude Include="src\core\vertexBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="lib\assimp\include\assimp\color4.inl" />
+    <None Include="lib\assimp\include\assimp\config.h.in" />
+    <None Include="lib\assimp\include\assimp\material.inl" />
+    <None Include="lib\assimp\include\assimp\matrix3x3.inl" />
+    <None Include="lib\assimp\include\assimp\matrix4x4.inl" />
+    <None Include="lib\assimp\include\assimp\quaternion.inl" />
+    <None Include="lib\assimp\include\assimp\SmoothingGroups.inl" />
+    <None Include="lib\assimp\include\assimp\vector2.inl" />
+    <None Include="lib\assimp\include\assimp\vector3.inl" />
     <None Include="lib\glm\detail\func_common.inl" />
     <None Include="lib\glm\detail\func_common_simd.inl" />
     <None Include="lib\glm\detail\func_exponential.inl" />
