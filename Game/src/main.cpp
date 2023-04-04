@@ -14,6 +14,8 @@
 #include "core/time.h"
 #include "core/scene.h"
 #include "core/texture.h"
+#include "core/loader.h"
+#include "core/shaders.h" // TODO : remove this from core? does it even matter?
 
 #include <glad/glad.h>
 #include <GLFW/glfw3.h>
@@ -111,27 +113,27 @@ static void setupScene(Scene& scene)
 	auto specularTex = std::make_shared<Texture>("res/textures/container2_specular.png", Texture::TextureFormat::RGBA);
 	auto plainTex = std::make_shared<Texture>("res/textures/defaultTex.png", Texture::TextureFormat::RGBA);
 
-	auto basicLitShader  = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/basicLit.frag");
-	auto plainColorShader = std::make_shared<Shader>("res/shaders/basic.vert", "res/shaders/colorOnly.frag");
-	
+	auto basicLitShader = Shaders::basicLit();
+	auto plainColorShader = Shaders::plainUnlit();
+
 	plainColorShader->use();
 	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	auto white    = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
+	auto white = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 128.0f);
 	//auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader, diffuseTex, specularTex, 128.0f);
 	//auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
-	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, nullptr, nullptr, 0.0f);
+	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 
 	setupDirectionalLight(scene);
 	setupSpotlight(scene);
 	setupPointLights(scene);
 
-	Object sphere{ Primitives::Sphere(), white };
-	Object cube{ Primitives::Cube(), white };
-	Object plane{ Primitives::Plane(), white };
-	Object pointLight1{ Primitives::Sphere(), lightMaterial };
-	Object pointLight2{ Primitives::Sphere(), lightMaterial };
-	Object pointLight3{ Primitives::Sphere(), lightMaterial };
+	Object sphere{ std::make_pair(Primitives::Sphere(), white) };
+	Object cube{ std::make_pair(Primitives::Cube(), white) };
+	Object plane{ std::make_pair(Primitives::Plane(), white) };
+	Object pointLight1{ std::make_pair(Primitives::Sphere(), lightMaterial) };
+	Object pointLight2{ std::make_pair(Primitives::Sphere(), lightMaterial) };
+	Object pointLight3{ std::make_pair(Primitives::Sphere(), lightMaterial) };
 	
 	sphere.Position = glm::vec3(-2.0f, 0.5f, -1.0f);
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
@@ -146,6 +148,12 @@ static void setupScene(Scene& scene)
 	
 	pointLight3.Position = glm::vec3(+1.5f, 0.35f, -1.0f);
 	pointLight3.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+
+	// MODEL LOADING TESTS
+
+	//loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx");
+	
+	// END MODEL LOADING TESTS
 
 	scene.AddObject(sphere);
 	scene.AddObject(cube);

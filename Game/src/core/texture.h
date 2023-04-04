@@ -27,6 +27,4 @@ private:
 	int m_width;
 	int m_height;
 	int m_bitsPerPixel;
-	std::string filepath;
-
 };

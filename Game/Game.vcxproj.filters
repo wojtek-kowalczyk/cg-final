@@ -90,6 +90,9 @@
     <ClCompile Include="src\core\material.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\core\shaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="lib\glad\glad.h">
@@ -1272,6 +1275,12 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\assimp\include\assimp\config.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\loader.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\shaders.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

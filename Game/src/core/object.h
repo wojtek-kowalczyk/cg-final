@@ -14,14 +14,13 @@ public:
 	glm::vec3 Rotation	{ 0.0f, 0.0f, 0.0f };
 	glm::vec3 Scale		{ 1.0f, 1.0f, 1.0f };
 
-	Object(const std::shared_ptr<Mesh>& mesh, const std::shared_ptr<Material>& material);
-	//Object(const std::vector<std::shared_ptr<Mesh>>& meshes);
+	Object(const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& meshWithMaterialPtr);
+	Object(const std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>>& meshesWithMaterialPtrs);
 
 	glm::mat4 GetModelMatrix() const;
+
 private:
-	// will there ever be a case of more meshes than materials or vice versa?
-	std::vector<std::shared_ptr<Mesh>> m_meshes;
-	std::shared_ptr<Material> m_material;
+	std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>> m_meshesWithMaterialPtrs;
 
 	friend class Scene;
 };

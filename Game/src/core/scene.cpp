@@ -63,57 +63,69 @@ void Scene::Render() const
 	{
 		glm::mat4 model = object.GetModelMatrix();
 
-		Shader& shader = *(object.m_material->MainShader);
-		shader.use();
-		
-		shader.setMat4f("u_v", view);
-		shader.setMat4f("u_p", projection);
-		shader.setMat4f("u_m", model);
-
-		if (object.m_material->DiffuseMap != nullptr)
-			object.m_material->DiffuseMap->Bind(0);
-		if (object.m_material->SpecularMap != nullptr)
-			object.m_material->SpecularMap->Bind(1);
-
-		shader.setFloat("u_mat.shininess", object.m_material->Shininess);
-		shader.setVec3f("u_mat.albedo", object.m_material->Albedo);
-		shader.setInt("u_mat.diffuse", object.m_material->DiffuseTextureSlot);
-		shader.setInt("u_mat.specular", object.m_material->SpecularTextureSlot);
-
-		shader.setVec3f("u_dirLight.direction", m_directionalLight.direction);
-		shader.setVec3f("u_dirLight.color", m_directionalLight.color);
-
-		shader.setInt("u_numLights", m_pointLights.size());
-		char buffer[50];
-		for (int i = 0; i < m_pointLights.size(); i++)
+		for (const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& meshWithMat : object.m_meshesWithMaterialPtrs)
 		{
-			sprintf_s(buffer, "u_pointLights[%d].position", i);
-			shader.setVec3f(buffer, m_pointLights[i].position);
-			sprintf_s(buffer, "u_pointLights[%d].color", i);
-			shader.setVec3f(buffer, m_pointLights[i].color);
-			sprintf_s(buffer, "u_pointLights[%d].constant", i);
-			shader.setFloat(buffer, m_pointLights[i].constant); // lower = brighter
-			sprintf_s(buffer, "u_pointLights[%d].liner", i);
-			shader.setFloat(buffer, m_pointLights[i].linear);
-			sprintf_s(buffer, "u_pointLights[%d].quadratic", i);
-			shader.setFloat(buffer, m_pointLights[i].quadratic);
-		}
+			Shader& shader = *(meshWithMat.second->MainShader);
+			shader.use();
 
-		shader.setVec3f("u_spotLight.position", m_spotlight.position);
-		shader.setVec3f("u_spotLight.direction", m_spotlight.direction);
+			// TODO : maybe skip this if shader is unlit? introduce a way to differentiate here what type of shader that is.
+			// setup point lights uniforms
+			char buffer[50];
+			for (int i = 0; i < m_pointLights.size(); i++)
+			{
+				sprintf_s(buffer, "u_pointLights[%d].position", i);
+				shader.setVec3f(buffer, m_pointLights[i].position);
+				sprintf_s(buffer, "u_pointLights[%d].color", i);
+				shader.setVec3f(buffer, m_pointLights[i].color);
+				sprintf_s(buffer, "u_pointLights[%d].constant", i);
+				shader.setFloat(buffer, m_pointLights[i].constant); // lower = brighter
+				sprintf_s(buffer, "u_pointLights[%d].liner", i);
+				shader.setFloat(buffer, m_pointLights[i].linear);
+				sprintf_s(buffer, "u_pointLights[%d].quadratic", i);
+				shader.setFloat(buffer, m_pointLights[i].quadratic);
+			}
 
-		shader.setVec3f("u_spotLight.color", m_spotlight.color);
-		shader.setFloat("u_spotLight.constant", m_spotlight.constant); // lower = brighter
-		shader.setFloat("u_spotLight.linear", m_spotlight.linear);
-		shader.setFloat("u_spotLight.quadratic", m_spotlight.quadratic);
-		shader.setFloat("u_spotLight.cutOff", m_spotlight.cutOff);
-		shader.setFloat("u_spotLight.outerCutOff", m_spotlight.outerCutOff);
+			shader.setVec3f("u_spotLight.position", m_spotlight.position);
+			shader.setVec3f("u_spotLight.direction", m_spotlight.direction);
 
-		shader.setVec3f("u_viewerPos", m_camera->Position);
+			shader.setVec3f("u_spotLight.color", m_spotlight.color);
+			shader.setFloat("u_spotLight.constant", m_spotlight.constant); // lower = brighter
+			shader.setFloat("u_spotLight.linear", m_spotlight.linear);
+			shader.setFloat("u_spotLight.quadratic", m_spotlight.quadratic);
+			shader.setFloat("u_spotLight.cutOff", m_spotlight.cutOff);
+			shader.setFloat("u_spotLight.outerCutOff", m_spotlight.outerCutOff);
 
-		for (const auto& mesh : object.m_meshes)
-		{
-			m_renderer.Draw(*mesh, shader);
+			shader.setVec3f("u_viewerPos", m_camera->Position);
+
+			shader.setMat4f("u_v", view);
+			shader.setMat4f("u_p", projection);
+			shader.setMat4f("u_m", model);
+
+			const int numDiffuseMaps = meshWithMat.second->DiffuseMaps.size();
+			const int numSpecularMaps = meshWithMat.second->SpecularMaps.size();
+
+			// TODO : right now there is only support for one diffuse and one specular texture, despite material holding many
+			if (meshWithMat.second->DiffuseMaps.size() > 0)
+			{
+				meshWithMat.second->DiffuseMaps[0]->Bind(0);
+				shader.setInt("u_mat.diffuse", 0);
+			}
+
+			if (meshWithMat.second->SpecularMaps.size() > 0)
+			{
+				meshWithMat.second->SpecularMaps[0]->Bind(1);
+				shader.setInt("u_mat.diffuse", 1);
+			}
+
+			shader.setFloat("u_mat.shininess", meshWithMat.second->Shininess);
+			shader.setVec3f("u_mat.albedo", meshWithMat.second->Albedo);
+
+			shader.setVec3f("u_dirLight.direction", m_directionalLight.direction);
+			shader.setVec3f("u_dirLight.color", m_directionalLight.color);
+
+			shader.setInt("u_numLights", m_pointLights.size());
+
+			m_renderer.Draw(*meshWithMat.first, shader);
 		}
 	}
 }

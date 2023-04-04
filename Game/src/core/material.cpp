@@ -2,9 +2,9 @@
 
 Material::Material(glm::vec3 albedo,
 	const std::shared_ptr<Shader>& shader,
-	const std::shared_ptr<Texture>& diffuseMap,
-	const std::shared_ptr<Texture>& specularMap,
+	const std::vector<std::shared_ptr<Texture>>& diffuseMaps,
+	const std::vector<std::shared_ptr<Texture>>& specularMaps,
 	float shininess)
-	: Albedo(albedo), MainShader(shader), DiffuseMap(diffuseMap), SpecularMap(specularMap), Shininess(shininess)
+	: Albedo(albedo), MainShader(shader), DiffuseMaps(diffuseMaps), SpecularMaps(specularMaps), Shininess(shininess)
 {
 }
