@@ -119,9 +119,7 @@ static void setupScene(Scene& scene)
 	plainColorShader->use();
 	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	auto white = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 128.0f);
-	//auto orange = std::make_shared<Material>(glm::vec3(0.7f, 0.5f, 0.1f), basicLitShader, diffuseTex, specularTex, 128.0f);
-	//auto yellow = std::make_shared<Material>(glm::vec3(0.9f, 0.9f, 0.0f), basicLitShader, diffuseTex, specularTex, 128.0f);
+	auto white = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{diffuseTex}, std::vector<std::shared_ptr<Texture>>{specularTex}, 128.0f);
 	auto lightMaterial = std::make_shared<Material>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 
 	setupDirectionalLight(scene);

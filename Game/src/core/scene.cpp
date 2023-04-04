@@ -114,7 +114,7 @@ void Scene::Render() const
 			if (meshWithMat.second->SpecularMaps.size() > 0)
 			{
 				meshWithMat.second->SpecularMaps[0]->Bind(1);
-				shader.setInt("u_mat.diffuse", 1);
+				shader.setInt("u_mat.specular", 1);
 			}
 
 			shader.setFloat("u_mat.shininess", meshWithMat.second->Shininess);
