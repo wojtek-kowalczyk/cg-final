@@ -1,5 +1,5 @@
 #include "camera.h"
-#include "consts.h"
+#include "../consts.h"
 
 Camera::Camera(glm::vec3 position, glm::vec3 up, float yaw, float pitch)
 	: Forward(glm::vec3(0.0f, 0.0f, -1.0f)),

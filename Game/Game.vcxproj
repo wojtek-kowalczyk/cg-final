@@ -147,7 +147,7 @@
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(ProjectDir)lib\GLFW\bin\;$(ProjectDir)lib\assimp\bin\;</AdditionalLibraryDirectories>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mt.lib</AdditionalDependencies>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;user32.lib;Gdi32.lib;Shell32.lib;assimp-vc143-mtd.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -204,7 +204,6 @@
     <ClInclude Include="lib\assimp\include\assimp\aabb.h" />
     <ClInclude Include="lib\assimp\include\assimp\ai_assert.h" />
     <ClInclude Include="lib\assimp\include\assimp\anim.h" />
-    <ClInclude Include="lib\assimp\include\assimp\AssertHandler.h" />
     <ClInclude Include="lib\assimp\include\assimp\Base64.hpp" />
     <ClInclude Include="lib\assimp\include\assimp\BaseImporter.h" />
     <ClInclude Include="lib\assimp\include\assimp\Bitmap.h" />
@@ -600,7 +599,6 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\assimp\include\assimp\color4.inl" />
-    <None Include="lib\assimp\include\assimp\config.h.in" />
     <None Include="lib\assimp\include\assimp\material.inl" />
     <None Include="lib\assimp\include\assimp\matrix3x3.inl" />
     <None Include="lib\assimp\include\assimp\matrix4x4.inl" />
