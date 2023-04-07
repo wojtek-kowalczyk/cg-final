@@ -84,13 +84,13 @@
     <ClCompile Include="src\core\primitives.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\core\material.h">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\core\material.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\core\shaders.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\loader.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\core\xmaterial.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -1278,6 +1278,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="lib\assimp\include\assimp\ZipArchiveIOSystem.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\core\xmaterial.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
