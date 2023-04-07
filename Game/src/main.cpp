@@ -15,6 +15,7 @@
 #include "core/scene.h"
 #include "core/texture.h"
 #include "core/loader.h"
+
 #include "core/shaders.h" // TODO : remove this from core? does it even matter?
 
 #include <glad/glad.h>
@@ -124,7 +125,7 @@ static void setupScene(Scene& scene)
 
 	setupDirectionalLight(scene);
 	setupSpotlight(scene);
-	setupPointLights(scene);
+	//setupPointLights(scene);
 
 	Object sphere{ std::make_pair(Primitives::Sphere(), white) };
 	Object cube{ std::make_pair(Primitives::Cube(), white) };
@@ -150,7 +151,9 @@ static void setupScene(Scene& scene)
 	// MODEL LOADING TESTS
 
 	//loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx");
-	
+	Object loaded = loadModel("res\\cube.obj");
+	scene.AddObject(loaded);
+
 	// END MODEL LOADING TESTS
 
 	scene.AddObject(sphere);

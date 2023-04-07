@@ -8,3 +8,4 @@ xMaterial::xMaterial(glm::vec3 albedo,
 	: Albedo(albedo), MainShader(shader), DiffuseMaps(diffuseMaps), SpecularMaps(specularMaps), Shininess(shininess)
 {
 }
+ 

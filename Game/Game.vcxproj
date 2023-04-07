@@ -185,6 +185,7 @@
     <ClCompile Include="lib\stb_image\stb_image.cpp" />
     <ClCompile Include="src\core\camera.cpp" />
     <ClCompile Include="src\core\indexBuffer.cpp" />
+    <ClCompile Include="src\core\loader.cpp" />
     <ClCompile Include="src\core\log.cpp" />
     <ClCompile Include="src\core\xmaterial.cpp" />
     <ClCompile Include="src\core\mesh.cpp" />

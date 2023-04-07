@@ -63,7 +63,7 @@ void Scene::Render() const
 	{
 		glm::mat4 model = object.GetModelMatrix();
 
-		for (const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& meshWithMat : object.m_meshesWithMaterialPtrs)
+		for (const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>& meshWithMat : object.m_meshesWithMaterialPtrs)
 		{
 			Shader& shader = *(meshWithMat.second->MainShader);
 			shader.use();
