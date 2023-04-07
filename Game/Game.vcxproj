@@ -186,14 +186,14 @@
     <ClCompile Include="src\core\camera.cpp" />
     <ClCompile Include="src\core\indexBuffer.cpp" />
     <ClCompile Include="src\core\log.cpp" />
-    <ClCompile Include="src\core\material.cpp" />
+    <ClCompile Include="src\core\xmaterial.cpp" />
     <ClCompile Include="src\core\mesh.cpp" />
     <ClCompile Include="src\core\object.cpp" />
     <ClCompile Include="src\core\primitives.cpp" />
     <ClCompile Include="src\core\renderer.cpp" />
     <ClCompile Include="src\core\scene.cpp" />
     <ClCompile Include="src\core\shader.cpp" />
-    <ClCompile Include="src\core\material.h" />
+    <ClCompile Include="src\core\xmaterial.h" />
     <ClCompile Include="src\core\texture.cpp" />
     <ClCompile Include="src\core\vertexArray.cpp" />
     <ClCompile Include="src\core\vertexBuffer.cpp" />

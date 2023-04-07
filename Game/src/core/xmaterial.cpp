@@ -1,6 +1,6 @@
-#include "material.h"
+#include "xMaterial.h"
 
-Material::Material(glm::vec3 albedo,
+xMaterial::xMaterial(glm::vec3 albedo,
 	const std::shared_ptr<Shader>& shader,
 	const std::shared_ptr<Texture>& diffuseMap,
 	const std::shared_ptr<Texture>& specularMap,
