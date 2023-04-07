@@ -8,10 +8,10 @@
 #include <memory>
 #include <vector>
 
-class Material
+class xMaterial
 {
 public:
-	Material(
+	xMaterial(
 		glm::vec3 albedo,
 		const std::shared_ptr<Shader>& shader,
 		const std::vector<std::shared_ptr<Texture>>& diffuseMaps,

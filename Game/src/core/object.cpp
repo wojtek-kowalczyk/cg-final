@@ -2,12 +2,12 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-Object::Object(const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>& meshWithMaterialPtr)
+Object::Object(const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>& meshWithMaterialPtr)
 {
 	m_meshesWithMaterialPtrs.push_back(meshWithMaterialPtr);
 }
 
-Object::Object(const std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<Material>>>& meshesWithMaterialPtrs)
+Object::Object(const std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>>& meshesWithMaterialPtrs)
 {
 	m_meshesWithMaterialPtrs.insert(m_meshesWithMaterialPtrs.end(), meshesWithMaterialPtrs.begin(), meshesWithMaterialPtrs.end());
 }
