@@ -151,9 +151,14 @@ static void setupScene(Scene& scene)
 
 	// MODEL LOADING TESTS
 
-	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx");
+	// TODO : this one doesn't load for some reason
+	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
+	Object loaded = loadModel("res\\kenney_survival-kit\\Models\\OBJ format\\barrel.obj"); 
+	loaded.Position = glm::vec3(0.0f, 1.0f, 0.0f);
+	loaded.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
+
 	//Object loaded = loadModel("res\\cube.fbx");
-	//scene.AddObject(loaded);
+	scene.AddObject(loaded);
 
 	// END MODEL LOADING TESTS
 
