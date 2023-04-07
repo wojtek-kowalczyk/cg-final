@@ -17,7 +17,7 @@ public:
 	~Texture();
 
 	void Bind(unsigned int slot);
-	void Unbind();
+	void Unbind(unsigned int slot);
 	unsigned int Id() const { return m_rendererId; }
 
 private:
