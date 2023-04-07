@@ -49,6 +49,12 @@ void Texture::Unbind(unsigned int slot)
 	glBindTexture(GL_TEXTURE_2D, 0);
 }
 
+std::shared_ptr<Texture> Texture::Default()
+{
+	static auto defaultTex = std::make_shared<Texture>("res\\textures\\defaultTex.png", TextureFormat::RGBA);
+	return defaultTex;
+}
+
 GLint Texture::GetGLEnumForTextureFormat(Texture::TextureFormat format)
 {
 	switch (format)

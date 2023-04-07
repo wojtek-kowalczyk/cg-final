@@ -3,6 +3,7 @@
 #include "glad/glad.h"
 
 #include <string>
+#include <memory>
 
 class Texture
 {
@@ -19,6 +20,8 @@ public:
 	void Bind(unsigned int slot);
 	void Unbind(unsigned int slot);
 	unsigned int Id() const { return m_rendererId; }
+
+	static std::shared_ptr<Texture> Default();
 
 private:
 	GLint GetGLEnumForTextureFormat(Texture::TextureFormat format);

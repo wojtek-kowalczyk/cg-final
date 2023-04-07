@@ -120,16 +120,17 @@ static void setupScene(Scene& scene)
 	plainColorShader->use();
 	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	auto white = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{diffuseTex}, std::vector<std::shared_ptr<Texture>>{specularTex}, 128.0f);
+	auto textTextured = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{diffuseTex}, std::vector<std::shared_ptr<Texture>>{specularTex}, 128.0f);
 	auto lightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+	auto defaultMat = xMaterial::Default();
 
 	setupDirectionalLight(scene);
 	setupSpotlight(scene);
-	//setupPointLights(scene);
+	setupPointLights(scene);
 
-	Object sphere{ std::make_pair(Primitives::Sphere(), white) };
-	Object cube{ std::make_pair(Primitives::Cube(), white) };
-	Object plane{ std::make_pair(Primitives::Plane(), white) };
+	Object sphere{ std::make_pair(Primitives::Sphere(), defaultMat) };
+	Object cube{ std::make_pair(Primitives::Cube(), defaultMat) };
+	Object plane{ std::make_pair(Primitives::Plane(), defaultMat) };
 	Object pointLight1{ std::make_pair(Primitives::Sphere(), lightMaterial) };
 	Object pointLight2{ std::make_pair(Primitives::Sphere(), lightMaterial) };
 	Object pointLight3{ std::make_pair(Primitives::Sphere(), lightMaterial) };
@@ -138,7 +139,7 @@ static void setupScene(Scene& scene)
 	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
 	plane.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
 
-	// sync positions to actual point lights position
+	// sync positions to actual point lights position TODO : make this more robust, not hardcoded
 	pointLight1.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
 	pointLight1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 	
@@ -150,9 +151,9 @@ static void setupScene(Scene& scene)
 
 	// MODEL LOADING TESTS
 
-	//loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx");
-	Object loaded = loadModel("res\\cube.obj");
-	scene.AddObject(loaded);
+	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx");
+	//Object loaded = loadModel("res\\cube.fbx");
+	//scene.AddObject(loaded);
 
 	// END MODEL LOADING TESTS
 
@@ -190,7 +191,7 @@ static void setupPointLights(Scene& scene)
 		PointLight light;
 
 		light.position = glm::vec3(-1.0f, 0.25f, 0.0f);
-		light.color = glm::vec3(1.0f, 0.0f, 0.0f) * 0.5f;
+		light.color = glm::vec3(1.0f, 0.0f, 0.0f) * 0.3f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
@@ -203,7 +204,7 @@ static void setupPointLights(Scene& scene)
 		PointLight light;
 
 		light.position = glm::vec3(-3.0f, 0.5f, 1.0f);
-		light.color = glm::vec3(1.0f, 0.0f, 1.0f) * 0.5f;
+		light.color = glm::vec3(0.0f, 0.0f, 1.0f) * 0.3f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
@@ -218,7 +219,7 @@ static void setupPointLights(Scene& scene)
 		PointLight light;
 
 		light.position = glm::vec3(+1.5f, 0.35f, -1.0f);
-		light.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.5f;
+		light.color = glm::vec3(0.0f, 1.0f, 0.0f) * 0.3f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;

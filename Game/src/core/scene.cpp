@@ -68,9 +68,8 @@ void Scene::Render() const
 			Shader& shader = *(meshWithMat.second->MainShader);
 			shader.use();
 
-			// TODO : maybe skip this if shader is unlit? introduce a way to differentiate here what type of shader that is.
-			// setup point lights uniforms
-			char buffer[50];
+			// TODO : maybe skip lights setup if shader is unlit? introduce a way to differentiate here what type of shader that is.
+			char buffer[100]; // this will be painful to debug when I overflow this...
 			for (int i = 0; i < m_pointLights.size(); i++)
 			{
 				sprintf_s(buffer, "u_pointLights[%d].position", i);
@@ -126,6 +125,19 @@ void Scene::Render() const
 			shader.setInt("u_numLights", m_pointLights.size());
 
 			m_renderer.Draw(*meshWithMat.first, shader);
+
+			// If they were bound - unbind them - so as not to reuse textures on objects that don't have textures.
+			// If an object doesn't have a texture it will be black
+			
+			if (meshWithMat.second->DiffuseMaps.size() > 0)
+			{
+				meshWithMat.second->DiffuseMaps[0]->Unbind(0);
+			}
+
+			if (meshWithMat.second->SpecularMaps.size() > 0)
+			{
+				meshWithMat.second->SpecularMaps[0]->Unbind(1);
+			}
 		}
 	}
 }

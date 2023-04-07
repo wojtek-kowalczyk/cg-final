@@ -23,4 +23,6 @@ public:
 	std::vector<std::shared_ptr<Texture>> SpecularMaps; // TODO : only 1 is supported atm.
 	std::shared_ptr<Shader> MainShader;
 	float Shininess;
+
+	static std::shared_ptr<xMaterial> Default();
 };
