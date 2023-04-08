@@ -29,7 +29,7 @@ static std::vector<std::string> getTextureFilepaths(aiMaterial* mat, aiTextureTy
     }
 
     return texturePaths;
-}
+} 
 
 static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(aiMesh* mesh, const aiScene* scene)
 {

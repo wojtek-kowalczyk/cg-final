@@ -9,6 +9,9 @@
 //  If you still want to calculate lighting in view space you want to transform all the relevant 
 //  vectors with the view matrix as well (don't forget to change the Normal matrix too)."
 
+// TODO : currently this shader doesn't allow for black texture like I'd want it.
+// It will absorb all the light, not simply have a black color.
+
 in vec3 FragmentPosInWorldSpace;
 in vec3 Normal;
 in vec2 UV;

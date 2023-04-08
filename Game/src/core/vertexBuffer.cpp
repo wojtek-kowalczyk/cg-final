@@ -5,6 +5,8 @@ VertexBuffer::VertexBuffer(const float* data, unsigned int count) : m_count { co
 {
 	glGenBuffers(1, &m_id);
 	glBindBuffer(GL_ARRAY_BUFFER, m_id);
+	// TODO : this will sometimes (1 in 10 or less) throw Unhandled exception, access vialoation trying to read data at 0x0... with NON ZERO address.
+	// TODO : investigate
 	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), (const void*)data, GL_STATIC_DRAW);
 }
 

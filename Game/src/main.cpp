@@ -94,7 +94,6 @@ static void setupScene(Scene& scene)
 {
 	auto diffuseTex = std::make_shared<Texture>("res/textures/container2.png", Texture::TextureFormat::RGBA);
 	auto specularTex = std::make_shared<Texture>("res/textures/container2_specular.png", Texture::TextureFormat::RGBA);
-	auto plainTex = std::make_shared<Texture>("res/textures/defaultTex.png", Texture::TextureFormat::RGBA);
 
 	auto basicLitShader = Shaders::basicLit();
 	auto plainColorShader = Shaders::plainUnlit();
@@ -133,17 +132,17 @@ static void setupScene(Scene& scene)
 
 	// MODEL LOADING TESTS
 
-	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
-	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\OBJ format\\barrel.obj"); 
-	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\GLTF format\\barrel.glb"); 
-	//loaded.Position = glm::vec3(0.0f, 1.0f, 0.0f);
-	//loaded.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
-	Object loaded = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
-	loaded.Rotation = glm::vec3(-90, 0, 0);
-	loaded.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	Object loaded1 = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
+	loaded1.Position = glm::vec3(2.0f, 0.0f, -2.0f);
+	loaded1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+
+	Object loaded2 = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
+	loaded2.Rotation = glm::vec3(-90, 0, 0);
+	loaded2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	//Object loaded = loadModel("res\\cube.fbx");
-	scene.AddObject(loaded);
+	scene.AddObject(loaded1);
+	scene.AddObject(loaded2);
 
 	// END MODEL LOADING TESTS
 
