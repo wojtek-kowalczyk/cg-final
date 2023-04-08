@@ -48,11 +48,11 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
         normal.z = mesh->mNormals[i].z;
 
         glm::vec2 uv{ 0.0f, 0.0f };
-        //if (mesh->mTextureCoords[0]) // check whether it contains tex coords
-        //{
-        //    uv.x = mesh->mTextureCoords[i]->x;
-        //    uv.y = mesh->mTextureCoords[i]->y;
-        //}
+        if (mesh->mTextureCoords[0]) // check whether it contains tex coords
+        {
+            uv.x = mesh->mTextureCoords[0][i].x;
+            uv.y = mesh->mTextureCoords[0][i].y;
+        }
 
         vertices.push_back(Vertex{ pos,normal,uv });
     }
