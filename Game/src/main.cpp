@@ -30,29 +30,13 @@
 
 #include <iostream>
 
-#pragma region Notes
-//glm::vec3 Pivot;
-// pivot by default should be assumed to be 0,0,0 of local space, which then gets transformed.
-// if we want the pivot to be the top of the cube, we would put it at 0,1,0 local space, and all rotations translations and scaling should take that into account. 
+// TODO handle single and multi mech objects as parts of the same object
 
-// how would we define a camera?
-// it has transform just like the object has, forward vectors can be inferred.
-// although camera calls Forward quite a lot, if it becomes a problem we can always just make it a field.
-// but not having this as a field makes things simpler (no sync required)
+// links to models:
+// https://free3d.com/3d-model/abandoned-cottage-house-825251.htmlstatic 
+// https://www.kenney.nl/assets/survival-kit
 
-// light? 
-// position, direction, radius, falloff, intensity, color etc..
-// we would be wasting rotation and scale
-
-// handle single and multi mech objects as parts of the same object
-
-// so not taking the component architecture, we could have
-// Camera -> basically a factory for view matrix. Position and euler angles.
-// point light -> position, radius, intensity, color, falloff
-// directional light -> direction, color, intensity (does this even have to be an entity? Might be though)
-#pragma endregion	
-
-static void onWindowResized(GLFWwindow* window, int width, int height);
+void onWindowResized(GLFWwindow* window, int width, int height);
 static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 static bool initWindow(GLFWwindow** window);
 static void initImGui(GLFWwindow* window);
@@ -67,8 +51,6 @@ static void setupScene(Scene& scene);
 static void setupDirectionalLight(Scene& scene);
 static void setupSpotlight(Scene& scene);
 static void setupPointLights(Scene& scene);
-
-// how should be object handles like VertexBuffer or shader handled? should they be stack or hep allocated? Shader is just one int...
 
 // TODO : maybe put the camera entirely in a scene?
 // TODO : this has to be global for callbacks? Figure out a way to not do that
@@ -152,10 +134,13 @@ static void setupScene(Scene& scene)
 	// MODEL LOADING TESTS
 
 	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
-	Object loaded = loadModel("res\\kenney_survival-kit\\Models\\OBJ format\\barrel.obj"); 
+	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\OBJ format\\barrel.obj"); 
 	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\GLTF format\\barrel.glb"); 
-	loaded.Position = glm::vec3(0.0f, 1.0f, 0.0f);
-	loaded.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
+	//loaded.Position = glm::vec3(0.0f, 1.0f, 0.0f);
+	//loaded.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
+	Object loaded = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
+	loaded.Rotation = glm::vec3(-90, 0, 0);
+	loaded.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	//Object loaded = loadModel("res\\cube.fbx");
 	scene.AddObject(loaded);

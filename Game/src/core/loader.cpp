@@ -92,13 +92,11 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
 
         for (auto& path : diffuseMapPaths)
         {
-            Texture map{ path, Texture::TextureFormat::RGBA };
-            diffuseMaps.push_back(std::make_shared<Texture>(map));
+            diffuseMaps.push_back(std::make_shared<Texture>(path, Texture::TextureFormat::RGBA));
         }
         for (auto& path : specularMapPaths)
         {
-            Texture map{ path, Texture::TextureFormat::RGBA };
-            specularMaps.push_back(std::make_shared<Texture>(map));
+            specularMaps.push_back(std::make_shared<Texture>(path, Texture::TextureFormat::RGBA));
         }
 
         // TODO : do I want this by default?
@@ -106,7 +104,7 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
         if (diffuseMaps.size() == 0)
             diffuseMaps.push_back(Texture::Default());
         if (specularMaps.size() == 0)
-            specularMaps.push_back(Texture::Default());
+            specularMaps.push_back(Texture::Default()); // TODO : maybe default black?
     }
 
     VertexBufferLayout layout;
@@ -143,8 +141,8 @@ static std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>>
 Object loadModel(std::string path)
 {
     Assimp::Importer import;
-    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
-    //const aiTexture* embeddedTex = scene->GetEmbeddedTexture(path.c_str());
+    const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate );
+    const aiTexture* embeddedTex = scene->GetEmbeddedTexture(path.c_str());
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
