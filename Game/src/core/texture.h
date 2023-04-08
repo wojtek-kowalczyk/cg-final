@@ -21,7 +21,8 @@ public:
 	void Unbind(unsigned int slot);
 	unsigned int Id() const { return m_rendererId; }
 
-	static std::shared_ptr<Texture> Default();
+	static std::shared_ptr<Texture> White();
+	static std::shared_ptr<Texture> Black();
 
 private:
 	GLint GetGLEnumForTextureFormat(Texture::TextureFormat format);

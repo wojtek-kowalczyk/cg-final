@@ -102,9 +102,9 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
         // TODO : do I want this by default?
         // supply default white texture if no textures loaded 
         if (diffuseMaps.size() == 0)
-            diffuseMaps.push_back(Texture::Default());
+            diffuseMaps.push_back(Texture::White());
         if (specularMaps.size() == 0)
-            specularMaps.push_back(Texture::Default()); // TODO : maybe default black?
+            specularMaps.push_back(Texture::Black());
     }
 
     VertexBufferLayout layout;
