@@ -33,7 +33,7 @@ static std::vector<std::string> getTextureFilepaths(aiMaterial* mat, aiTextureTy
 
 static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(aiMesh* mesh, const aiScene* scene)
 {
-    struct Vertex { glm::vec3 pos, normal; glm::vec2 uv; };
+    struct Vertex { glm::vec3 pos; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; };
     std::vector<Vertex> vertices;
     for (unsigned int i = 0; i < mesh->mNumVertices; i++)
     {
@@ -48,13 +48,25 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
         normal.z = mesh->mNormals[i].z;
 
         glm::vec2 uv{ 0.0f, 0.0f };
-        if (mesh->mTextureCoords[0]) // check whether it contains tex coords
+        if (mesh->mTextureCoords[0])
         {
             uv.x = mesh->mTextureCoords[0][i].x;
             uv.y = mesh->mTextureCoords[0][i].y;
         }
 
-        vertices.push_back(Vertex{ pos,normal,uv });
+        glm::vec3 color{ 1.0f, 1.0f, 1.0f }; // a = 1.0 in shader
+        if (mesh->mMaterialIndex >= 0)
+        {
+            // Kenney models use vertex colors not textures.
+            aiMaterial* material = scene->mMaterials[mesh->mMaterialIndex];
+            aiColor3D aiColor(0.0f, 0.0f, 0.0f);
+            material->Get(AI_MATKEY_COLOR_DIFFUSE, aiColor);
+            color.r = aiColor.r;
+            color.g = aiColor.g;
+            color.b = aiColor.b;
+        }
+
+        vertices.push_back(Vertex{ pos, normal, uv, color });
     }
 
     // process indices
@@ -101,6 +113,7 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
     layout.Add({ 3, GL_FLOAT }); // pos
     layout.Add({ 3, GL_FLOAT }); // normal
     layout.Add({ 2, GL_FLOAT }); // uvs
+    layout.Add({ 3, GL_FLOAT }); // color
 
     auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * sizeof(Vertex), indices.data(), indices.size(), layout);
     auto myMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), Shaders::basicLit(), diffuseMaps, specularMaps, 128.0f);
@@ -131,6 +144,7 @@ Object loadModel(std::string path)
 {
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs);
+    //const aiTexture* embeddedTex = scene->GetEmbeddedTexture(path.c_str());
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {

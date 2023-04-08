@@ -7,48 +7,48 @@
 std::shared_ptr<Mesh> Primitives::Cube()
 {
 	float vertices[] = {
-		// positions			  // normals			// texture coords
-		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,
-
-		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,
-		-0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,
-
-		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		-0.5f, -0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-
-		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,
-
-		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,
-
-		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
-		 0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,
-		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
-		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,
-		-0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,
-		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,
+		// positions			  // normals			// uvs			// colors (all white)
+		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+																	
+		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	  0.0f,  0.0f, 1.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+																
+		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	 -1.0f,  0.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+																		
+		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  1.0f,  0.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+																	
+		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f,  0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f, -0.5f, -0.5f,	  0.0f, -1.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+																	
+		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 1.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		 0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f,  0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
+		-0.5f,  0.5f, -0.5f,	  0.0f,  1.0f,  0.0f,	0.0f, 1.0f,		1.0f, 1.0f, 1.0f,
 	};
 	
 	// This is stupid, but I wnat the mesh to be VBO+IBO not VBO only.
@@ -75,6 +75,7 @@ std::shared_ptr<Mesh> Primitives::Cube()
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // normal
 		layout.Add(VertexBufferLayout::Element{ 2, GL_FLOAT }); // UVs
+		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
 
 		cube = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float),
 			indices, sizeof(indices) / sizeof(unsigned int), layout);
@@ -86,11 +87,11 @@ std::shared_ptr<Mesh> Primitives::Cube()
 std::shared_ptr<Mesh> Primitives::Plane()
 {
 	static constexpr float vertices[] = {
-		// positions			// normals			// UVs
-		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +0.0f,
-		+1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +0.0f,
-		+1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +1.0f,
-		-1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +1.0f,
+		// positions			// normals			// UVs			// Colors (all white)
+		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +0.0f,	1.0f, 1.0f, 1.0f,
+		+1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +0.0f,	1.0f, 1.0f, 1.0f,
+		+1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +1.0f,	1.0f, 1.0f, 1.0f,
+		-1.0f, 0.0f, +1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +1.0f,	1.0f, 1.0f, 1.0f,
 	};
 
 	static constexpr unsigned int indices[] = {
@@ -106,6 +107,7 @@ std::shared_ptr<Mesh> Primitives::Plane()
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // position
 		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // normals
 		layout.Add(VertexBufferLayout::Element{ 2, GL_FLOAT }); // UVs
+		layout.Add(VertexBufferLayout::Element{ 3, GL_FLOAT }); // color
 
 		plane = std::make_shared<Mesh>(vertices, sizeof(vertices) / sizeof(float),
 			indices, sizeof(indices) / sizeof(unsigned int), layout);
@@ -119,54 +121,7 @@ static float lerp(float a, float b, float t)
 	return a + t * (b - a);
 }
 
-struct SphereVertex { float x, y, z, nx, ny, nz, s, t; };
-/*
-static void buildSphereMesh(std::vector<SphereVertex>& vertexBuffer, std::vector<unsigned int>& indexBuffer, float radius, unsigned int samples)
-{
-	float x, y, z;
-	float U, V; // u rows, v columns
-
-	// generate points
-	for (int i = 0; i <= samples; ++i)
-	{
-		constexpr float pi = glm::pi<float>();
-		V = lerp(pi / 2.0f, -pi / 2.0f, (float)i / samples);
-		z = radius * sinf(V);
-
-		for (int j = 0; j <= samples; ++j)
-		{
-			U = lerp(0.0f, pi * 2.0f, (float)j / samples);
-			x = radius * cosf(V) * cosf(U);
-			y = radius * cosf(V) * sinf(U);
-			vertexBuffer.push_back({ x, y, z, 0, 0, 0, (float)j / samples, (float)i / samples });
-		}
-	}
-
-	// triangulate
-	for (int i = 0; i < samples; ++i)
-	{
-		int k1 = (samples + 1) * (i + 0);
-		int k2 = (samples + 1) * (i + 1);
-
-		for (int j = 0; j < samples; ++j, ++k1, ++k2)
-		{
-			if (i != 0)
-			{
-				indexBuffer.push_back(k1);
-				indexBuffer.push_back(k2);
-				indexBuffer.push_back(k1 + 1);
-			}
-
-			if (i != (samples - 1))
-			{
-				indexBuffer.push_back(k1 + 1);
-				indexBuffer.push_back(k2);
-				indexBuffer.push_back(k2 + 1);
-			}
-		}
-	}
-}
-*/
+struct SphereVertex { float x, y, z, nx, ny, nz, s, t, r, g, b; };
 
 // adapted from https://gist.github.com/Pikachuxxxx/5c4c490a7d7679824e0e18af42918efc
 void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsigned int>& indices, int radius, int latitudes, int longitudes)
@@ -208,6 +163,10 @@ void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsig
 			vertex.nx = vertex.x * lengthInv;
 			vertex.ny = vertex.y * lengthInv;
 			vertex.nz = vertex.z * lengthInv;
+
+			vertex.r = 1.0f;
+			vertex.g = 1.0f;
+			vertex.b = 1.0f;
 			
 			vertices.push_back(vertex);
 		}
@@ -258,6 +217,8 @@ std::shared_ptr<Mesh> Primitives::Sphere()
 		layout.Add({ 3, GL_FLOAT }); // pos
 		layout.Add({ 3, GL_FLOAT }); // normal
 		layout.Add({ 2, GL_FLOAT }); // uv
+		layout.Add({ 3, GL_FLOAT }); // color
+
 		sphere = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * (sizeof(SphereVertex) / sizeof(float)),
 			indices.data(), indices.size(), layout);
 	}

@@ -12,6 +12,7 @@
 in vec3 FragmentPosInWorldSpace;
 in vec3 Normal;
 in vec2 UV;
+in vec3 Color;
 
 struct Material {
     vec3 albedo;
@@ -82,6 +83,7 @@ void main()
     outputColor += CalculateSpotLight(u_spotLight, normal, viewDir); 
 
     outputColor *= u_mat.albedo;
+    outputColor *= Color;
 
     gl_FragColor = vec4(outputColor, 1.0);
 }

@@ -151,9 +151,9 @@ static void setupScene(Scene& scene)
 
 	// MODEL LOADING TESTS
 
-	// TODO : this one doesn't load for some reason
 	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
 	Object loaded = loadModel("res\\kenney_survival-kit\\Models\\OBJ format\\barrel.obj"); 
+	//Object loaded = loadModel("res\\kenney_survival-kit\\Models\\GLTF format\\barrel.glb"); 
 	loaded.Position = glm::vec3(0.0f, 1.0f, 0.0f);
 	loaded.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
 
