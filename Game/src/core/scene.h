@@ -32,5 +32,6 @@ private:
 	std::vector<PointLight> m_pointLights;
 	DirectionalLight m_directionalLight;
 	SpotLight m_spotlight; // currently - flashlight. might wanna consider more.
+	glm::vec3 m_ambientLight;
 };
 

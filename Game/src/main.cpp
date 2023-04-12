@@ -109,54 +109,24 @@ static void setupScene(Scene& scene)
 
 	setupDirectionalLight(scene);
 	setupSpotlight(scene);
-	setupPointLights(scene);
+	//setupPointLights(scene);
 
-	Object sphere{ std::make_pair(Primitives::Sphere(), defaultMat) };
-	Object cube{ std::make_pair(Primitives::Cube(), defaultMat) };
-	Object plane{ std::make_pair(Primitives::Plane(), defaultMat) };
-	Object pointLight1{ std::make_pair(Primitives::Sphere(), lightMaterial) };
-	Object pointLight2{ std::make_pair(Primitives::Sphere(), lightMaterial) };
-	Object pointLight3{ std::make_pair(Primitives::Sphere(), lightMaterial) };
+	Object ground{ std::make_pair(Primitives::Plane(), defaultMat) };
 	
-	sphere.Position = glm::vec3(-2.0f, 0.5f, -1.0f);
-	cube.Position = glm::vec3(0.0f, 0.5f, 0.0f);
-	plane.Scale = glm::vec3(3.0f, 3.0f, 3.0f);
+	ground.Scale = glm::vec3(300.0f, 1.0f, 300.0f);
 
-	// sync positions to actual point lights position TODO : make this more robust, not hardcoded
-	pointLight1.Position = glm::vec3(-1.0f, 0.25f, 0.0f);
-	pointLight1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
-	
-	pointLight2.Position = glm::vec3(-3.0f, 0.5f, 1.0f);
-	pointLight2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
-	
-	pointLight3.Position = glm::vec3(+1.5f, 0.35f, -1.0f);
-	pointLight3.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
-
-	// MODEL LOADING TESTS
-
-	Object loaded1 = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\barrel.fbx"); 
+	Object loaded1 = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx"); 
 	loaded1.Position = glm::vec3(2.0f, 0.0f, -2.0f);
 	loaded1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
-	Object loaded2 = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
-	loaded2.Rotation = glm::vec3(-90, 0, 0);
-	loaded2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	Object cabin = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
+	cabin.Rotation = glm::vec3(-90, 0, 0);
+	cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
-	//Object loaded = loadModel("res\\cube.fbx");
 	scene.MoveObject(loaded1);
-	scene.MoveObject(loaded2);
+	scene.MoveObject(cabin);
 
-	// END MODEL LOADING TESTS
-
-	std::unique_ptr<Behaviour> testBehaviour = std::make_unique<TestBehaviour>();
-	sphere.AddBehaviour(testBehaviour);
-
-	scene.MoveObject(sphere);
-	scene.MoveObject(cube);
-	scene.MoveObject(plane);
-	scene.MoveObject(pointLight1);
-	scene.MoveObject(pointLight2);
-	scene.MoveObject(pointLight3);
+	scene.MoveObject(ground);
 }
 
 static void setupDirectionalLight(Scene& scene)
@@ -170,7 +140,7 @@ static void setupDirectionalLight(Scene& scene)
 static void setupSpotlight(Scene& scene)
 {
 	SpotLight spotlight;
-	spotlight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	spotlight.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.25f;
 	spotlight.constant = 0.1f; // lower = brighter
 	spotlight.linear = 0.09f;
 	spotlight.quadratic = 0.032f;

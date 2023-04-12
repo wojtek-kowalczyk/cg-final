@@ -75,6 +75,7 @@ void main()
     vec3 normal = normalize(Normal);
     vec3 viewDir = normalize(u_viewerPos - FragmentPosInWorldSpace);
 
+    outputColor += ambient;
     outputColor += CalculateDirectionalLight(u_dirLight, normal, viewDir);
 
     for (int i = 0; i < min(u_numLights, NUM_POINT_LIGHTS); i++) // TODO : fix out of bounds access

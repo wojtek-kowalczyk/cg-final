@@ -3,7 +3,8 @@
 #include "../consts.h"
 #include "texture.h"
 
-Scene::Scene(const std::shared_ptr<Camera>& camera) : m_camera(camera), m_directionalLight(), m_spotlight()
+Scene::Scene(const std::shared_ptr<Camera>& camera)
+	: m_camera(camera), m_directionalLight(), m_spotlight(), m_ambientLight(0.1f, 0.1f, 0.1f)
 {
 	m_renderer.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_renderer.SetMode(Renderer::Mode::Triangles);
@@ -127,6 +128,8 @@ void Scene::Render() const
 
 			shader.setVec3f("u_dirLight.direction", m_directionalLight.direction);
 			shader.setVec3f("u_dirLight.color", m_directionalLight.color);
+
+			shader.setVec3f("u_ambientLight", m_ambientLight);
 
 			shader.setInt("u_numLights", m_pointLights.size());
 
