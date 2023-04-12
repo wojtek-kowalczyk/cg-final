@@ -16,6 +16,8 @@
 #include "core/texture.h"
 #include "core/loader.h"
 
+#include "core/behaviours/testBehaviour.h"
+
 #include "core/shaders.h" // TODO : remove this from core? does it even matter?
 
 #include <glad/glad.h>
@@ -141,17 +143,20 @@ static void setupScene(Scene& scene)
 	loaded2.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	//Object loaded = loadModel("res\\cube.fbx");
-	scene.AddObject(loaded1);
-	scene.AddObject(loaded2);
+	scene.MoveObject(loaded1);
+	scene.MoveObject(loaded2);
 
 	// END MODEL LOADING TESTS
 
-	scene.AddObject(sphere);
-	scene.AddObject(cube);
-	scene.AddObject(plane);
-	scene.AddObject(pointLight1);
-	scene.AddObject(pointLight2);
-	scene.AddObject(pointLight3);
+	std::unique_ptr<Behaviour> testBehaviour = std::make_unique<TestBehaviour>();
+	sphere.AddBehaviour(testBehaviour);
+
+	scene.MoveObject(sphere);
+	scene.MoveObject(cube);
+	scene.MoveObject(plane);
+	scene.MoveObject(pointLight1);
+	scene.MoveObject(pointLight2);
+	scene.MoveObject(pointLight3);
 }
 
 static void setupDirectionalLight(Scene& scene)

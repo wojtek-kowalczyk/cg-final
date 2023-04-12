@@ -198,6 +198,7 @@
     <ClCompile Include="src\core\vertexArray.cpp" />
     <ClCompile Include="src\core\vertexBuffer.cpp" />
     <ClCompile Include="src\core\xmaterial.cpp" />
+    <ClCompile Include="src\core\behaviours\testBehaviour.cpp" />
     <ClCompile Include="src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -580,6 +581,7 @@
     <ClInclude Include="lib\KHR\khrplatform.h" />
     <ClInclude Include="lib\stb_image\stb_image.h" />
     <ClInclude Include="src\consts.h" />
+    <ClInclude Include="src\core\behaviours\behaviour.h" />
     <ClInclude Include="src\core\camera.h" />
     <ClInclude Include="src\core\lights.h" />
     <ClInclude Include="src\core\indexBuffer.h" />
@@ -597,6 +599,7 @@
     <ClInclude Include="src\core\vertexArray.h" />
     <ClInclude Include="src\core\vertexBuffer.h" />
     <ClInclude Include="src\core\xmaterial.h" />
+    <ClInclude Include="src\core\behaviours\testBehaviour.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="lib\assimp\include\assimp\color4.inl" />

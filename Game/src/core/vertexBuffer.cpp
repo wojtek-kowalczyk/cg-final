@@ -5,8 +5,10 @@ VertexBuffer::VertexBuffer(const float* data, unsigned int count) : m_count { co
 {
 	glGenBuffers(1, &m_id);
 	glBindBuffer(GL_ARRAY_BUFFER, m_id);
-	// TODO : this will sometimes (1 in 10 or less) throw Unhandled exception, access vialoation trying to read data at 0x0... with NON ZERO address.
-	// TODO : investigate
+	// TODO : this will sometimes (1/5) throw Unhandled exception, 
+	// access vialoation trying to read data at 0x0... with NON ZERO address. Investigate
+	// I'm reading that it might be solved by upgrading gpu drivers. It is said to happen more on AMD GPUs
+	// and I realized that this program is running on my integrated GPU (AMD) rather than on the dedicated one (NVidia)
 	glBufferData(GL_ARRAY_BUFFER, count * sizeof(float), (const void*)data, GL_STATIC_DRAW);
 }
 

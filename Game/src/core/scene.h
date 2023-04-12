@@ -4,6 +4,7 @@
 #include "object.h"
 #include "renderer.h"
 #include "lights.h"
+#include "behaviours/behaviour.h"
 
 #include <GLFW/glfw3.h>
 
@@ -14,10 +15,11 @@ class Scene
 {
 public:
 	Scene(const std::shared_ptr<Camera>& camera);
+
 	void Update(GLFWwindow* window, float deltaTime);
 	void Render() const;
 	void OnImGuiRender() const;
-	void AddObject(const Object& object);
+	void MoveObject(Object& object); // transfers ownership to the scene
 	void AddPointLight(const PointLight& light);
 	void SetDirectionalLight(const DirectionalLight& light);
 	void SetSpotLight(const SpotLight& light);

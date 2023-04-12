@@ -9,9 +9,12 @@ Scene::Scene(const std::shared_ptr<Camera>& camera) : m_camera(camera), m_direct
 	m_renderer.SetMode(Renderer::Mode::Triangles);
 }
 
-void Scene::AddObject(const Object& object)
+void Scene::MoveObject(Object& object)
 {
-	m_objects.push_back(object);
+	// I have no idea why I cannot pass Object&& and just push_back(object).
+	// It will tell me it uses the push_back overload for const Object& instead.
+	// I would prefer this to take Object&& so it's evident in main that this function transfers ownership.
+	m_objects.push_back(std::move(object));
 }
 
 void Scene::AddPointLight(const PointLight& light)
@@ -48,13 +51,16 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 
 	m_spotlight.position = m_camera->Position;
 	m_spotlight.direction = m_camera->Forward;
+
+	for (auto& object : m_objects)
+	{
+		object.Update(deltaTime);
+	}
 }
 
 void Scene::Render() const
 {
 	m_renderer.Clear();
-
-	// If we don't use zoom this doesn't need to change every frame. Only when one of its settings changes.
 
 	glm::mat4 projection = m_camera->GetProjectionMatrix();
 	glm::mat4 view = m_camera->GetViewMatrix();

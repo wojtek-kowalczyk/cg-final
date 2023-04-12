@@ -26,3 +26,16 @@ glm::mat4 Object::GetModelMatrix() const
 
 	return model;
 }
+
+void Object::Update(float deltaTime)
+{
+	for (auto& behaviour : m_behaviours)
+	{
+		behaviour->Update(this, deltaTime); // behaviours modify objects. I'm not sure I'm satisfied with this design.
+	}
+}
+
+void Object::AddBehaviour(std::unique_ptr<Behaviour>& behaviour) // has to be non-const, I'm moving the data out of it.
+{
+	m_behaviours.push_back(std::move(behaviour));
+}
