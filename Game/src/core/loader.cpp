@@ -113,7 +113,7 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
     layout.Add({ 2, GL_FLOAT }); // uvs
     layout.Add({ 3, GL_FLOAT }); // color
 
-    auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * sizeof(Vertex), indices.data(), indices.size(), layout);
+    auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * sizeof(Vertex) / sizeof(float), indices.data(), indices.size(), layout);
     auto myMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), Shaders::basicLit(), diffuseMaps, specularMaps, 128.0f);
 
     return std::make_pair(myMesh, myMaterial);
