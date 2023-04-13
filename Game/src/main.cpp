@@ -94,39 +94,54 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	auto diffuseTex = std::make_shared<Texture>("res/textures/container2.png", Texture::TextureFormat::RGBA);
-	auto specularTex = std::make_shared<Texture>("res/textures/container2_specular.png", Texture::TextureFormat::RGBA);
-
-	auto basicLitShader = Shaders::basicLit();
-	auto plainColorShader = Shaders::plainUnlit();
-
-	plainColorShader->use();
-	plainColorShader->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
-
-	auto textTextured = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, std::vector<std::shared_ptr<Texture>>{diffuseTex}, std::vector<std::shared_ptr<Texture>>{specularTex}, 128.0f);
-	auto lightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), plainColorShader, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
-	auto defaultMat = xMaterial::Default();
-
 	setupDirectionalLight(scene);
-	setupSpotlight(scene);
+	//setupSpotlight(scene);
 	//setupPointLights(scene);
 
-	Object ground{ std::make_pair(Primitives::Plane(), defaultMat) };
+	auto basicLitShader = Shaders::basicLit();
 	
-	ground.Scale = glm::vec3(300.0f, 1.0f, 300.0f);
+	auto whiteUnlit = Shaders::plainUnlit();
+	whiteUnlit->use();
+	whiteUnlit->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
 
-	Object loaded1 = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx"); 
-	loaded1.Position = glm::vec3(2.0f, 0.0f, -2.0f);
-	loaded1.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	auto lightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), whiteUnlit, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+	auto defaultMat = xMaterial::Default();
+
+	{
+		auto groundDiffuseTex = std::make_shared<Texture>("res/textures/Forest-Ground.png", Texture::TextureFormat::RGB);
+		auto groundSpecularTex = Texture::Black();
+		auto groundMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, 
+			std::vector<std::shared_ptr<Texture>>{groundDiffuseTex},
+			std::vector<std::shared_ptr<Texture>>{groundSpecularTex}, 128.0f);
+
+		Object ground{ std::make_pair(Primitives::Plane(), groundMaterial) };
+		ground.Scale = glm::vec3(200.0f, 1.0f, 200.0f);
+		ground.TextureScale = glm::vec2(400.0f, 400.0f);
+
+		scene.MoveObject(ground);
+	}
+
+	Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx"); 
+	tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
+	tree.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	Object cabin = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
 	cabin.Rotation = glm::vec3(-90, 0, 0);
 	cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
-	scene.MoveObject(loaded1);
-	scene.MoveObject(cabin);
+	// TODO : find a different way to handle object composed of 4 primitives.
+	// TODO : revisit if have time
+	//Object bushFromPrimitives{ std::vector{
+	//	//std::make_pair(Primitives::Sphere(glm::vec3(0.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat),
+	//	//std::make_pair(Primitives::Sphere(glm::vec3(1.2,0.3,0.0), glm::vec3(0.6,0.6,0.6)), defaultMat),
+	//	//std::make_pair(Primitives::Sphere(glm::vec3(0.7,0.1,0.4), glm::vec3(0.6,0.6,0.6)), defaultMat),
+	//	
+	//	// this is darker for some reason? if further from origin, the mesh appears darker? normals issue?
+	//	std::make_pair(Primitives::Sphere(glm::vec3(6.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
+	//}};
 
-	scene.MoveObject(ground);
+	scene.MoveObject(tree);
+	scene.MoveObject(cabin);
 }
 
 static void setupDirectionalLight(Scene& scene)
@@ -154,8 +169,8 @@ static void setupPointLights(Scene& scene)
 	{
 		PointLight light;
 
-		light.position = glm::vec3(-1.0f, 0.25f, 0.0f);
-		light.color = glm::vec3(1.0f, 0.0f, 0.0f) * 0.3f;
+		light.position = glm::vec3(2.0f, 0.25f, 2.0f);
+		light.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.4f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
@@ -176,8 +191,6 @@ static void setupPointLights(Scene& scene)
 
 		scene.AddPointLight(light);
 	}
-
-	// TODO : fix directional light -> test if working correctly. Reduce point light intensity.
 
 	{
 		PointLight light;

@@ -22,5 +22,6 @@ public:
     void setInt(const std::string& name, int value) const;
     void setFloat(const std::string& name, float value) const;
     void setMat4f(const std::string& name, const glm::mat4& matrix);
+    void setVec2f(const std::string& name, glm::vec2 vector);
     void setVec3f(const std::string& name, glm::vec3 vector);
 };

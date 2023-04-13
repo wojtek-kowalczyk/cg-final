@@ -6,7 +6,7 @@
 
 std::shared_ptr<Mesh> Primitives::Cube()
 {
-	float vertices[] = {
+	static float vertices[] = {
 		// positions			  // normals			// uvs			// colors (all white)
 		-0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	0.0f, 0.0f,		1.0f, 1.0f, 1.0f,
 		 0.5f, -0.5f, -0.5f,	  0.0f,  0.0f, -1.0f,	1.0f, 0.0f,		1.0f, 1.0f, 1.0f,
@@ -86,7 +86,7 @@ std::shared_ptr<Mesh> Primitives::Cube()
 
 std::shared_ptr<Mesh> Primitives::Plane()
 {
-	static constexpr float vertices[] = {
+	static float vertices[] = {
 		// positions			// normals			// UVs			// Colors (all white)
 		-1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+0.0f, +0.0f,	1.0f, 1.0f, 1.0f,
 		+1.0f, 0.0f, -1.0f,		0.0f, 1.0f, 0.0f,	+1.0f, +0.0f,	1.0f, 1.0f, 1.0f,
@@ -124,7 +124,8 @@ static float lerp(float a, float b, float t)
 struct SphereVertex { float x, y, z, nx, ny, nz, s, t, r, g, b; };
 
 // adapted from https://gist.github.com/Pikachuxxxx/5c4c490a7d7679824e0e18af42918efc
-void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsigned int>& indices, int radius, int latitudes, int longitudes)
+void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsigned int>& indices, 
+	int radius, int latitudes, int longitudes, glm::vec3 offset, glm::vec3 scale)
 {
 	float nx, ny, nz, lengthInv = 1.0f / radius;    // normal
 
@@ -158,6 +159,15 @@ void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsig
 			vertex.z = z;                           /* z = r * sin(phi) */
 			vertex.s = (float)j / longitudes;       /* s */
 			vertex.t = (float)i / latitudes;        /* t */
+
+			// Vertex tranformations
+			vertex.x *= scale.x;
+			vertex.y *= scale.y;
+			vertex.z *= scale.z;
+			
+			vertex.x += offset.x;
+			vertex.y += offset.y;
+			vertex.z += offset.z;
 
 			// normalized vertex normal
 			vertex.nx = vertex.x * lengthInv;
@@ -204,24 +214,21 @@ void GenerateSphereSmooth(std::vector<SphereVertex>& vertices, std::vector<unsig
 	}
 }
 
-std::shared_ptr<Mesh> Primitives::Sphere()
+std::shared_ptr<Mesh> Primitives::Sphere(glm::vec3 offset, glm::vec3 scale)
 {
-	static std::shared_ptr<Mesh> sphere = nullptr;
+	// This creates a new sphere each time it's called, rather than reusing the mesh. 
+	// This is only because I need to satisfy the assignment (see primitives.h)
+	// Ideally, I'd make this a static mesh and just return a pointer to it, so objects can reuse it.
 
-	if (sphere == nullptr)
-	{
-		std::vector<SphereVertex> vertices;
-		std::vector<unsigned int> indices;
-		GenerateSphereSmooth(vertices, indices, 1.0f, 8.0f, 16.0f);
-		VertexBufferLayout layout;
-		layout.Add({ 3, GL_FLOAT }); // pos
-		layout.Add({ 3, GL_FLOAT }); // normal
-		layout.Add({ 2, GL_FLOAT }); // uv
-		layout.Add({ 3, GL_FLOAT }); // color
+	std::vector<SphereVertex> vertices;
+	std::vector<unsigned int> indices;
+	GenerateSphereSmooth(vertices, indices, 1.0f, 8.0f, 16.0f, offset, scale);
+	VertexBufferLayout layout;
+	layout.Add({ 3, GL_FLOAT }); // pos
+	layout.Add({ 3, GL_FLOAT }); // normal
+	layout.Add({ 2, GL_FLOAT }); // uv
+	layout.Add({ 3, GL_FLOAT }); // color
 
-		sphere = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * (sizeof(SphereVertex) / sizeof(float)),
-			indices.data(), indices.size(), layout);
-	}
-
-	return sphere;
+	return std::make_shared<Mesh>((float*)vertices.data(), vertices.size() 
+		* (sizeof(SphereVertex) / sizeof(float)), indices.data(), indices.size(), layout);
 }

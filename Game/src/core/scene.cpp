@@ -107,6 +107,8 @@ void Scene::Render() const
 			shader.setMat4f("u_p", projection);
 			shader.setMat4f("u_m", model);
 
+			shader.setVec2f("u_UVScale", object.TextureScale);
+			
 			const int numDiffuseMaps = meshWithMat.second->DiffuseMaps.size();
 			const int numSpecularMaps = meshWithMat.second->SpecularMaps.size();
 

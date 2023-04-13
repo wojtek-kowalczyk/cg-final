@@ -8,6 +8,7 @@ layout (location = 3) in vec3 in_color;
 uniform mat4 u_m;
 uniform mat4 u_v;
 uniform mat4 u_p;
+uniform vec2 u_UVScale;
 
 out vec3 FragmentPosInWorldSpace;
 out vec3 Normal;
@@ -16,7 +17,7 @@ out vec3 Color;
 
 void main()
 {
-    UV = in_uv;
+    UV = in_uv * u_UVScale;
     Color = in_color;
 
     // this transpose invesrse should be done on the cpu. 
