@@ -121,16 +121,27 @@ static void setupScene(Scene& scene)
 		scene.MoveObject(ground, "ground");
 	}
 
-	Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx"); 
-	tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
-	tree.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	{ // TODO : setup multiple trees.
+		Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx");
+		tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
+		tree.Scale = glm::vec3(0.13f, 0.13f, 0.13f);
+		scene.MoveObject(tree, "tree");
+	}
 
-	Object cabin = loadModel("res\\cottage\\cottage_fbx.fbx");
-	cabin.Rotation = glm::vec3(-90, 0, 0);
-	cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+	{
+		Object cabin = loadModel("res\\cottage\\cottage_fbx.fbx");
+		cabin.Rotation = glm::vec3(-90, 0, 16.5f);
+		cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+		scene.MoveObject(cabin, "cabin");
+	}
 
-	Object jeep = loadModel("res\\jeep\\willy's_jeep.fbx");
-	scene.MoveObject(jeep, "jeep");
+	{
+		Object jeep = loadModel("res\\jeep\\willy's_jeep.fbx");
+		jeep.Position = glm::vec3(2.88f, 0.0f, 1.61f);
+		jeep.Rotation = glm::vec3(0.0f, -108.5f, 0.0f);
+		jeep.Scale = glm::vec3(0.35f, 0.35f, 0.35f);
+		scene.MoveObject(jeep, "jeep");
+	}
 
 	// TODO : find a different way to handle object composed of 4 primitives.
 	// TODO : revisit if have time
@@ -143,8 +154,6 @@ static void setupScene(Scene& scene)
 	//	std::make_pair(Primitives::Sphere(glm::vec3(6.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
 	//}};
 
-	scene.MoveObject(tree, "tree");
-	scene.MoveObject(cabin, "cabin");
 }
 
 static void setupDirectionalLight(Scene& scene)
