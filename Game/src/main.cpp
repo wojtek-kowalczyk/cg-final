@@ -118,7 +118,7 @@ static void setupScene(Scene& scene)
 		ground.Scale = glm::vec3(200.0f, 1.0f, 200.0f);
 		ground.TextureScale = glm::vec2(400.0f, 400.0f);
 
-		scene.MoveObject(ground);
+		scene.MoveObject(ground, "ground");
 	}
 
 	Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx"); 
@@ -130,7 +130,7 @@ static void setupScene(Scene& scene)
 	cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
 	Object jeep = loadModel("res\\jeep\\willy's_jeep.fbx");
-	scene.MoveObject(jeep);
+	scene.MoveObject(jeep, "jeep");
 
 	// TODO : find a different way to handle object composed of 4 primitives.
 	// TODO : revisit if have time
@@ -143,8 +143,8 @@ static void setupScene(Scene& scene)
 	//	std::make_pair(Primitives::Sphere(glm::vec3(6.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
 	//}};
 
-	scene.MoveObject(tree);
-	scene.MoveObject(cabin);
+	scene.MoveObject(tree, "tree");
+	scene.MoveObject(cabin, "cabin");
 }
 
 static void setupDirectionalLight(Scene& scene)

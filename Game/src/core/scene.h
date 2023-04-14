@@ -10,6 +10,7 @@
 
 #include <vector>
 #include <memory>
+#include <unordered_map>
 
 class Scene
 {
@@ -18,8 +19,8 @@ public:
 
 	void Update(GLFWwindow* window, float deltaTime);
 	void Render() const;
-	void OnImGuiRender() const;
-	void MoveObject(Object& object); // transfers ownership to the scene
+	void OnImGuiRender();
+	void MoveObject(Object& object, const std::string& id); // transfers ownership to the scene
 	void AddPointLight(const PointLight& light);
 	void SetDirectionalLight(const DirectionalLight& light);
 	void SetSpotLight(const SpotLight& light);
@@ -28,10 +29,15 @@ private:
 	// TODO multiple camera system.
 	std::shared_ptr<Camera> m_camera; // despite camera being integral part of the scene, I need it passed from main() since glfw input callbacks. // TODO : figure this out?
 	Renderer m_renderer;
-	std::vector<Object> m_objects;
+	std::unordered_map<std::string, Object> m_objects;
 	std::vector<PointLight> m_pointLights;
 	DirectionalLight m_directionalLight;
 	SpotLight m_spotlight; // currently - flashlight. might wanna consider more.
 	glm::vec3 m_ambientLight;
+
+	// Editor settings
+	bool m_scaleUniformly = true;
+	const char* m_selectedObjectId = nullptr; 
+	Object* m_selectedObject = nullptr;
 };
 

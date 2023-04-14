@@ -3,6 +3,10 @@
 #include "../consts.h"
 #include "texture.h"
 
+#include <imgui/imgui.h>
+
+#include <glm/gtc/type_ptr.hpp>
+
 Scene::Scene(const std::shared_ptr<Camera>& camera)
 	: m_camera(camera), m_directionalLight(), m_spotlight(), m_ambientLight(0.1f, 0.1f, 0.1f)
 {
@@ -10,12 +14,12 @@ Scene::Scene(const std::shared_ptr<Camera>& camera)
 	m_renderer.SetMode(Renderer::Mode::Triangles);
 }
 
-void Scene::MoveObject(Object& object)
+void Scene::MoveObject(Object& object, const std::string& id)
 {
 	// I have no idea why I cannot pass Object&& and just push_back(object).
 	// It will tell me it uses the push_back overload for const Object& instead.
 	// I would prefer this to take Object&& so it's evident in main that this function transfers ownership.
-	m_objects.push_back(std::move(object));
+	m_objects.insert(std::make_pair(id, std::move(object)));
 }
 
 void Scene::AddPointLight(const PointLight& light)
@@ -55,7 +59,7 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 
 	for (auto& object : m_objects)
 	{
-		object.Update(deltaTime);
+		object.second.Update(deltaTime);
 	}
 }
 
@@ -68,9 +72,9 @@ void Scene::Render() const
 
 	for (const auto& object : m_objects)
 	{
-		glm::mat4 model = object.GetModelMatrix();
+		glm::mat4 model = object.second.GetModelMatrix();
 
-		for (const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>& meshWithMat : object.m_meshesWithMaterialPtrs)
+		for (const std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>& meshWithMat : object.second.m_meshesWithMaterialPtrs)
 		{
 			Shader& shader = *(meshWithMat.second->MainShader);
 			shader.use();
@@ -107,7 +111,7 @@ void Scene::Render() const
 			shader.setMat4f("u_p", projection);
 			shader.setMat4f("u_m", model);
 
-			shader.setVec2f("u_UVScale", object.TextureScale);
+			shader.setVec2f("u_UVScale", object.second.TextureScale);
 			
 			const int numDiffuseMaps = meshWithMat.second->DiffuseMaps.size();
 			const int numSpecularMaps = meshWithMat.second->SpecularMaps.size();
@@ -153,6 +157,49 @@ void Scene::Render() const
 	}
 }
 
-void Scene::OnImGuiRender() const
+void Scene::OnImGuiRender()
 {
+	ImGui::Text("scene objects:");
+
+	for (auto& pair : m_objects)
+	{
+		if (ImGui::Button(pair.first.c_str()))
+		{
+			if (m_selectedObject == &pair.second)
+			{
+				m_selectedObjectId = nullptr;
+				m_selectedObject = nullptr;
+			}
+			else
+			{
+				m_selectedObjectId = pair.first.c_str();
+				m_selectedObject = &pair.second;
+				break;
+			}
+		}
+	}
+
+	if (m_selectedObject != nullptr)
+	{
+		ImGui::Separator();
+		ImGui::Text(m_selectedObjectId);
+		ImGui::Separator();
+
+		ImGui::DragFloat3("position", glm::value_ptr(m_selectedObject->Position), 0.01f);
+		ImGui::DragFloat3("rotation", glm::value_ptr(m_selectedObject->Rotation), 0.5f);
+		ImGui::Checkbox("uniform", &m_scaleUniformly);
+		ImGui::SameLine();
+		if (!m_scaleUniformly)
+		{
+			ImGui::DragFloat3("scale",	glm::value_ptr(m_selectedObject->Scale), 0.01f);
+		}
+		else
+		{
+			ImGui::DragFloat("scale", glm::value_ptr(m_selectedObject->Scale), 0.01f);
+			m_selectedObject->Scale.y = m_selectedObject->Scale.x;
+			m_selectedObject->Scale.z = m_selectedObject->Scale.x;
+		}
+
+		ImGui::Separator();
+	}
 }
