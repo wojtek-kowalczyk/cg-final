@@ -17,6 +17,18 @@
 
 #include <iostream>
 
+static std::string getDirectoryFromPath(std::string filepath)
+{
+    std::string directory;
+    int last_slash_idx = filepath.rfind('\\');
+    if (std::string::npos != last_slash_idx)
+    {
+        return filepath.substr(0, last_slash_idx);
+    }
+    
+    return "";
+}
+
 static std::vector<std::string> getTextureFilepaths(aiMaterial* mat, aiTextureType type)
 {
     std::vector<std::string> texturePaths;
@@ -31,7 +43,8 @@ static std::vector<std::string> getTextureFilepaths(aiMaterial* mat, aiTextureTy
     return texturePaths;
 } 
 
-static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(aiMesh* mesh, const aiScene* scene)
+static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> 
+processMesh(aiMesh* mesh, const aiScene* scene, const std::string& modelPath)
 {
     struct Vertex { glm::vec3 pos; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; };
     std::vector<Vertex> vertices;
@@ -92,15 +105,16 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
 
         for (auto& path : diffuseMapPaths)
         {
-            diffuseMaps.push_back(std::make_shared<Texture>(path, Texture::TextureFormat::RGBA));
+            // paths are relative to the model
+            std::string texturePath = getDirectoryFromPath(modelPath) + '\\' + path;
+            diffuseMaps.push_back(std::make_shared<Texture>(texturePath, Texture::TextureFormat::RGBA));
         }
         for (auto& path : specularMapPaths)
         {
-            specularMaps.push_back(std::make_shared<Texture>(path, Texture::TextureFormat::RGBA));
+            std::string texturePath = getDirectoryFromPath(modelPath) + '\\' + path;
+            specularMaps.push_back(std::make_shared<Texture>(texturePath, Texture::TextureFormat::RGBA));
         }
 
-        // TODO : do I want this by default?
-        // supply default white texture if no textures loaded 
         if (diffuseMaps.size() == 0)
             diffuseMaps.push_back(Texture::White());
         if (specularMaps.size() == 0)
@@ -113,26 +127,30 @@ static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> processMesh(
     layout.Add({ 2, GL_FLOAT }); // uvs
     layout.Add({ 3, GL_FLOAT }); // color
 
-    auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), vertices.size() * sizeof(Vertex) / sizeof(float), indices.data(), indices.size(), layout);
-    auto myMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), Shaders::basicLit(), diffuseMaps, specularMaps, 128.0f);
+    auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), 
+        vertices.size() * sizeof(Vertex) / sizeof(float), indices.data(), indices.size(), layout);
+    auto myMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), Shaders::basicLit(),
+        diffuseMaps, specularMaps, 128.0f);
 
     return std::make_pair(myMesh, myMaterial);
 }
 
-static std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> processNode(aiNode* node, const aiScene* scene)
+static std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> 
+processNode(aiNode* node, const aiScene* scene, const std::string& path)
 {
     std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> meshesAndMaterials;
 
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshesAndMaterials.push_back(processMesh(mesh, scene));
+        meshesAndMaterials.push_back(processMesh(mesh, scene, path));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        auto childMeshesAndMaterials = processNode(node->mChildren[i], scene);
-        meshesAndMaterials.insert(meshesAndMaterials.begin(), childMeshesAndMaterials.begin(), childMeshesAndMaterials.end());
+        auto childMeshesAndMaterials = processNode(node->mChildren[i], scene, path);
+        meshesAndMaterials.insert(meshesAndMaterials.begin(), 
+            childMeshesAndMaterials.begin(), childMeshesAndMaterials.end());
     }
 
     return meshesAndMaterials;
@@ -142,7 +160,7 @@ Object loadModel(std::string path)
 {
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate );
-    const aiTexture* embeddedTex = scene->GetEmbeddedTexture(path.c_str());
+    //const aiTexture* embeddedTex = scene->GetEmbeddedTexture(path.c_str());
 
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
@@ -151,6 +169,6 @@ Object loadModel(std::string path)
         throw 0; // TODO : make this return invalid object? 
     }
     
-    auto meshesAndMaterials = processNode(scene->mRootNode, scene);
+    auto meshesAndMaterials = processNode(scene->mRootNode, scene, path);
     return Object{ meshesAndMaterials };
 }

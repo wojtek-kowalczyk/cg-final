@@ -125,9 +125,12 @@ static void setupScene(Scene& scene)
 	tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
 	tree.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
 
-	Object cabin = loadModel("res\\53-cottage_fbx\\cottage_fbx.fbx");
+	Object cabin = loadModel("res\\cottage\\cottage_fbx.fbx");
 	cabin.Rotation = glm::vec3(-90, 0, 0);
 	cabin.Scale = glm::vec3(0.1f, 0.1f, 0.1f);
+
+	Object jeep = loadModel("res\\jeep\\willy's_jeep.fbx");
+	scene.MoveObject(jeep);
 
 	// TODO : find a different way to handle object composed of 4 primitives.
 	// TODO : revisit if have time
