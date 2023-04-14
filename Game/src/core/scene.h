@@ -36,7 +36,7 @@ private:
 	glm::vec3 m_ambientLight;
 
 	// Editor settings
-	bool m_scaleUniformly = true;
+	bool m_scaleUniformly = false;
 	const char* m_selectedObjectId = nullptr; 
 	Object* m_selectedObject = nullptr;
 };

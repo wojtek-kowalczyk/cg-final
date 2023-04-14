@@ -157,6 +157,11 @@ void Scene::Render() const
 	}
 }
 
+static bool isUniforScale(glm::vec3 scale)
+{
+	return (scale.x - scale.y) < 0.001f && (scale.y - scale.z) < 0.001f;
+}
+
 void Scene::OnImGuiRender()
 {
 	ImGui::Text("scene objects:");
@@ -174,6 +179,7 @@ void Scene::OnImGuiRender()
 			{
 				m_selectedObjectId = pair.first.c_str();
 				m_selectedObject = &pair.second;
+				m_scaleUniformly = false; // reset this so that we don't recale the next clicked object
 				break;
 			}
 		}
