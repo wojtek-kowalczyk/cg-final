@@ -200,6 +200,14 @@ static void setupScene(Scene& scene)
 		mountains.Scale = glm::vec3(16.1f, 16.1f, 16.1f);
 		scene.MoveObject(mountains, "mountains");
 	}
+	
+	{
+		Object tents = loadModel("res\\kenney_survival-kit\\modified\\tents.fbx");
+		tents.Position = glm::vec3(3.24f, 0.0f, -0.82f);
+		tents.Rotation = glm::vec3(0.0f, 250.0f, 0.0f);
+		tents.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		scene.MoveObject(tents, "tents");
+	}
 
 	{
 		Object cabin = loadModel("res\\cottage\\cottage_fbx.fbx");
