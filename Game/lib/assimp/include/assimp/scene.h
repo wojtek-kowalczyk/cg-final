@@ -454,3 +454,5 @@ struct aiScene
 #endif //! extern "C"
 
 #endif // AI_SCENE_H_INC
+
+void drawObjectEditor();

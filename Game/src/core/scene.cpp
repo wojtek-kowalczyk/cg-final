@@ -8,9 +8,10 @@
 #include <imgui/imgui.h>
 
 #include <glm/gtc/type_ptr.hpp>
+#include "scene.h"
 
 Scene::Scene(const std::shared_ptr<Camera>& camera)
-	: m_camera(camera), m_directionalLight(), m_spotlight(), m_ambientLight(0.1f, 0.1f, 0.1f)
+	: m_camera(camera), m_directionalLight(), m_flashLight(), m_ambientLight(0.1f, 0.1f, 0.1f)
 {
 	m_renderer.SetClearFlags(GL_DEPTH_BUFFER_BIT | GL_COLOR_BUFFER_BIT);
 	m_renderer.SetMode(Renderer::Mode::Triangles);
@@ -34,9 +35,14 @@ void Scene::SetDirectionalLight(const DirectionalLight& light)
 	m_directionalLight = light;
 }
 
-void Scene::SetSpotLight(const SpotLight& light)
+void Scene::AddFlashLight(const SpotLight& light)
 {
-	m_spotlight = light;
+	m_flashLight = light;
+}
+
+void Scene::AddSpotLight(const SpotLight& spotlight)
+{
+	m_spotLights.push_back(spotlight);
 }
 
 void Scene::SetupSkybox(const std::vector<std::string>& maps)
@@ -90,8 +96,8 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Up, deltaTime);
 
-	m_spotlight.position = m_camera->Position;
-	m_spotlight.direction = m_camera->Forward;
+	m_flashLight.position = m_camera->Position;
+	m_flashLight.direction = m_camera->Forward;
 
 	for (auto& object : m_objects)
 	{
@@ -116,30 +122,56 @@ void Scene::Render() const
 			shader.use();
 
 			// TODO : maybe skip lights setup if shader is unlit? introduce a way to differentiate here what type of shader that is.
+
+			shader.setInt("u_numPointLights", m_pointLights.size());
 			char buffer[100]; // this will be painful to debug when I overflow this...
 			for (int i = 0; i < m_pointLights.size(); i++)
 			{
 				sprintf_s(buffer, "u_pointLights[%d].position", i);
 				shader.setVec3f(buffer, m_pointLights[i].position);
+			
 				sprintf_s(buffer, "u_pointLights[%d].color", i);
 				shader.setVec3f(buffer, m_pointLights[i].color);
+				
 				sprintf_s(buffer, "u_pointLights[%d].constant", i);
 				shader.setFloat(buffer, m_pointLights[i].constant); // lower = brighter
+				
 				sprintf_s(buffer, "u_pointLights[%d].liner", i);
 				shader.setFloat(buffer, m_pointLights[i].linear);
+				
 				sprintf_s(buffer, "u_pointLights[%d].quadratic", i);
 				shader.setFloat(buffer, m_pointLights[i].quadratic);
 			}
 
-			shader.setVec3f("u_spotLight.position", m_spotlight.position);
-			shader.setVec3f("u_spotLight.direction", m_spotlight.direction);
+			shader.setInt("u_numSpotLights", m_spotLights.size());
+			for (int i = 0; i < m_spotLights.size(); i++)
+			{
+				const SpotLight& spotLight = m_spotLights[i];
 
-			shader.setVec3f("u_spotLight.color", m_spotlight.color);
-			shader.setFloat("u_spotLight.constant", m_spotlight.constant); // lower = brighter
-			shader.setFloat("u_spotLight.linear", m_spotlight.linear);
-			shader.setFloat("u_spotLight.quadratic", m_spotlight.quadratic);
-			shader.setFloat("u_spotLight.cutOff", m_spotlight.cutOff);
-			shader.setFloat("u_spotLight.outerCutOff", m_spotlight.outerCutOff);
+				sprintf_s(buffer, "u_spotLights[%d].position", i);
+				shader.setVec3f(buffer, spotLight.position);
+
+				sprintf_s(buffer, "u_spotLights[%d].direction", i);
+				shader.setVec3f(buffer, spotLight.direction);
+
+				sprintf_s(buffer, "u_spotLights[%d].color", i);
+				shader.setVec3f(buffer, spotLight.color);
+
+				sprintf_s(buffer, "u_spotLights[%d].constant", i);
+				shader.setFloat(buffer, spotLight.constant); // lower = brighter
+
+				sprintf_s(buffer, "u_spotLights[%d].linear", i);
+				shader.setFloat(buffer, spotLight.linear);
+
+				sprintf_s(buffer, "u_spotLights[%d].quadratic", i);
+				shader.setFloat(buffer, spotLight.quadratic);
+
+				sprintf_s(buffer, "u_spotLights[%d].cutOff", i);
+				shader.setFloat(buffer, spotLight.cutOff);
+
+				sprintf_s(buffer, "u_spotLights[%d].outerCutOff", i);
+				shader.setFloat(buffer, spotLight.outerCutOff);
+			}
 
 			shader.setVec3f("u_viewerPos", m_camera->Position);
 
@@ -173,8 +205,6 @@ void Scene::Render() const
 
 			shader.setVec3f("u_ambientLight", m_ambientLight);
 
-			shader.setInt("u_numLights", m_pointLights.size());
-
 			m_renderer.Draw(*meshWithMat.first, shader);
 
 			// If they were bound - unbind them - so as not to reuse textures on objects that don't have textures.
@@ -203,7 +233,6 @@ static bool isUniforScale(glm::vec3 scale)
 void Scene::OnImGuiRender()
 {
 	ImGui::Text("scene objects:");
-
 	for (auto& pair : m_objects)
 	{
 		if (ImGui::Button(pair.first.c_str()))
@@ -235,7 +264,7 @@ void Scene::OnImGuiRender()
 		ImGui::SameLine();
 		if (!m_scaleUniformly)
 		{
-			ImGui::DragFloat3("scale",	glm::value_ptr(m_selectedObject->Scale), 0.01f);
+			ImGui::DragFloat3("scale", glm::value_ptr(m_selectedObject->Scale), 0.01f);
 		}
 		else
 		{

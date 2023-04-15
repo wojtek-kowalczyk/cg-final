@@ -50,16 +50,18 @@ struct SpotLight {
     float quadratic;
 };
 
-#define NUM_POINT_LIGHTS 20
+#define NUM_POINT_LIGHTS    20
+#define NUM_SPOT_LIGHTS     5
 
 uniform Material u_mat;
 uniform DirLight u_dirLight;
 uniform PointLight u_pointLights[NUM_POINT_LIGHTS]; 
-uniform SpotLight u_spotLight;
+uniform SpotLight u_spotLights[NUM_SPOT_LIGHTS];
 uniform vec3 u_ambientLight;
 
 uniform vec3 u_viewerPos;
-uniform int u_numLights; // if more than #defined - the excess will be ignored
+uniform int u_numPointLights; // if more than #defined - the excess will be ignored
+uniform int u_numSpotLights; // if more than #defined - the excess will be ignored
 
 // Function prototypes (just like in C)
 vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir); 
@@ -78,13 +80,15 @@ void main()
     outputColor += ambient;
     outputColor += CalculateDirectionalLight(u_dirLight, normal, viewDir);
 
-    for (int i = 0; i < min(u_numLights, NUM_POINT_LIGHTS); i++) // TODO : fix out of bounds access
+    for (int i = 0; i < min(u_numPointLights, NUM_POINT_LIGHTS); i++)
     {
         outputColor += CalculatePointLight(u_pointLights[i], normal, viewDir);
     }
 
-    // TODO : multiple? eg. street lights, or car?
-    outputColor += CalculateSpotLight(u_spotLight, normal, viewDir); 
+    for (int i = 0; i < min(u_numSpotLights, NUM_SPOT_LIGHTS); i++)
+    {
+        outputColor += CalculateSpotLight(u_spotLights[i], normal, viewDir);
+    }
 
     outputColor *= u_mat.albedo;
     outputColor *= Color;

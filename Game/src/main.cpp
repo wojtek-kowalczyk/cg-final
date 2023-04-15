@@ -51,7 +51,7 @@ static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 static void mouse_button_callback(GLFWwindow* window, int button, int action, int mods);
 static void setupScene(Scene& scene);
 static void setupDirectionalLight(Scene& scene);
-static void setupSpotlight(Scene& scene);
+static void setupSpotlights(Scene& scene);
 static void setupPointLights(Scene& scene);
 
 // TODO : maybe put the camera entirely in a scene?
@@ -94,7 +94,6 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	// TODO : Add a camp fire.
 	// TODO : add light to campfire, make it flicker.
 	// TODO : add tents.
 	// TODO : add my designed mesh.
@@ -110,14 +109,14 @@ static void setupScene(Scene& scene)
 	// TODO : different skybox for night and day?
 
 	setupDirectionalLight(scene);
-	//setupSpotlight(scene);
+	setupSpotlights(scene);
 	//setupPointLights(scene);
 
 	auto basicLitShader = Shaders::basicLit();
 	
 	auto whiteUnlit = Shaders::plainUnlit();
 	whiteUnlit->use();
-	whiteUnlit->setVec3f("u_color", Consts::fireYellow);
+	whiteUnlit->setVec3f("u_color", glm::vec3(1,1,1));
 
 	auto whiteLightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), whiteUnlit, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 	auto defaultMat = xMaterial::Default();
@@ -152,6 +151,7 @@ static void setupScene(Scene& scene)
 		fireLight.quadratic = 0.20f;
 		scene.AddPointLight(fireLight);
 
+		// TODO : change to yellowUnlit
 		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), whiteUnlit,
 			std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 		Object fire = loadModel("res\\kenney_survival-kit\\modified\\fire.fbx", yellowLightMaterial);
@@ -171,6 +171,18 @@ static void setupScene(Scene& scene)
 			"res\\textures\\skybox\\back.jpg"
 		};
 		scene.SetupSkybox(maps);
+	}
+
+	{
+		Object leftHeadlamp { std::make_pair(Primitives::Sphere(), whiteLightMaterial) };
+		leftHeadlamp.Position = glm::vec3(2.33f, 0.44f, 1.21f);
+		leftHeadlamp.Scale = glm::vec3(0.04, 0.04, 0.04);
+		scene.MoveObject(leftHeadlamp, "left headlamp");
+
+		Object rightHeadlamp{ std::make_pair(Primitives::Sphere(), whiteLightMaterial) };
+		rightHeadlamp.Position = glm::vec3(2.2f, 0.44f, 1.56f);
+		rightHeadlamp.Scale = glm::vec3(0.04, 0.04, 0.04);
+		scene.MoveObject(rightHeadlamp, "right headlamp");
 	}
 
 	{ 
@@ -231,67 +243,102 @@ static void setupScene(Scene& scene)
 	//	// this is darker for some reason? if further from origin, the mesh appears darker? normals issue?
 	//	std::make_pair(Primitives::Sphere(glm::vec3(6.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
 	//}};
-
 }
 
 static void setupDirectionalLight(Scene& scene)
 {
 	DirectionalLight directionalLight;
-	directionalLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+	directionalLight.color = glm::vec3(0.1f, 0.1f, 0.4f);
 	directionalLight.direction = glm::vec3(0.0f, -1.0f, -1.0f);
 	scene.SetDirectionalLight(directionalLight);
 }
 
-static void setupSpotlight(Scene& scene)
+static void setupSpotlights(Scene& scene)
 {
-	SpotLight spotlight;
-	spotlight.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.25f;
-	spotlight.constant = 0.1f; // lower = brighter
-	spotlight.linear = 0.09f;
-	spotlight.quadratic = 0.032f;
-	spotlight.cutOff = glm::cos(glm::radians(12.5f));
-	spotlight.outerCutOff = glm::cos(glm::radians(15.0f));
-	scene.SetSpotLight(spotlight);
+	{
+		SpotLight flashLight;
+		flashLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		flashLight.constant = 0.4f; // lower = brighter
+		flashLight.linear = 0.09f;
+		flashLight.quadratic = 0.032f;
+		flashLight.cutOff = glm::cos(glm::radians(12.5f));
+		flashLight.outerCutOff = glm::cos(glm::radians(15.0f));
+		//scene.MoveFlashLight(flashLight);
+	}
+
+	auto whiteUnlit = Shaders::plainUnlit();
+	whiteUnlit->use();
+	whiteUnlit->setVec3f("u_color", glm::vec3(1, 1, 1));
+	auto lightMaterial = std::make_shared<xMaterial>(glm::vec3(), whiteUnlit,
+		std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+
+	{
+		SpotLight headLight;
+		headLight.position = glm::vec3(2.33f, 0.44f, 1.21f);
+		glm::mat4 rotation = glm::mat4(1.0f);
+		rotation = glm::rotate(rotation, glm::radians(0.0f), glm::vec3(1, 0, 0));
+		rotation = glm::rotate(rotation, glm::radians(-25.0f), glm::vec3(0, 1, 0)); // -10 for the other one
+		rotation = glm::rotate(rotation, glm::radians(12.0f), glm::vec3(0, 0, 1));
+		headLight.direction = -glm::vec3(rotation * glm::vec4(1, 0, 0, 1));
+		headLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		headLight.constant = 0.4f; // lower = brighter
+		headLight.linear = 0.09f;
+		headLight.quadratic = 0.032f;
+		headLight.cutOff = glm::cos(glm::radians(10.0f));
+		headLight.outerCutOff = glm::cos(glm::radians(25.0f));
+		scene.AddSpotLight(headLight);
+	}
+
+	{
+		SpotLight headLight;
+		headLight.position = glm::vec3(2.2f, 0.44f, 1.56f);
+		glm::mat4 rotation = glm::mat4(1.0f);
+		rotation = glm::rotate(rotation, glm::radians(0.0f), glm::vec3(1, 0, 0));
+		rotation = glm::rotate(rotation, glm::radians(-10.0f), glm::vec3(0, 1, 0));
+		rotation = glm::rotate(rotation, glm::radians(12.0f), glm::vec3(0, 0, 1));
+		headLight.direction = -glm::vec3(rotation * glm::vec4(1, 0, 0, 1));
+		headLight.color = glm::vec3(1.0f, 1.0f, 1.0f);
+		headLight.constant = 0.4f; // lower = brighter
+		headLight.linear = 0.09f;
+		headLight.quadratic = 0.032f;
+		headLight.cutOff = glm::cos(glm::radians(10.0f));
+		headLight.outerCutOff = glm::cos(glm::radians(25.0f));
+		scene.AddSpotLight(headLight);
+	}
 }
 
 static void setupPointLights(Scene& scene)
 {
 	{
 		PointLight light;
-
 		light.position = glm::vec3(2.0f, 0.25f, 2.0f);
 		light.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.4f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-
 		scene.AddPointLight(light);
 	}
 
 	{
 		PointLight light;
-
 		light.position = glm::vec3(-3.0f, 0.5f, 1.0f);
 		light.color = glm::vec3(0.0f, 0.0f, 1.0f) * 0.3f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-
 		scene.AddPointLight(light);
 	}
 
 	{
 		PointLight light;
-
 		light.position = glm::vec3(+1.5f, 0.35f, -1.0f);
 		light.color = glm::vec3(0.0f, 1.0f, 0.0f) * 0.3f;
 		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-
 		scene.AddPointLight(light);
 	}
 }

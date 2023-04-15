@@ -22,9 +22,10 @@ public:
 	void Render() const;
 	void OnImGuiRender();
 	void MoveObject(Object& object, const std::string& id); // transfers ownership to the scene
+	void AddSpotLight(const SpotLight& spotlight);
+	void AddFlashLight(const SpotLight& light);
 	void AddPointLight(const PointLight& light);
 	void SetDirectionalLight(const DirectionalLight& light);
-	void SetSpotLight(const SpotLight& light);
 	void SetupSkybox(const std::vector<std::string>& maps);
 
 private:
@@ -34,15 +35,16 @@ private:
 	std::shared_ptr<Camera> m_camera; // despite camera being integral part of the scene, I need it passed from main() since glfw input callbacks. // TODO : figure this out?
 	Renderer m_renderer;
 	std::unordered_map<std::string, Object> m_objects;
+	std::vector<SpotLight> m_spotLights;
 	std::vector<PointLight> m_pointLights;
 	DirectionalLight m_directionalLight;
-	SpotLight m_spotlight; // currently - flashlight. might wanna consider more.
+	SpotLight m_flashLight; // currently - flashlight. might wanna consider more.
 	glm::vec3 m_ambientLight;
 	std::unique_ptr<Object> m_skybox;
 
 	// Editor settings
 	bool m_scaleUniformly = false;
-	const char* m_selectedObjectId = nullptr; 
 	Object* m_selectedObject = nullptr;
+	const char* m_selectedObjectId = nullptr;
 };
 

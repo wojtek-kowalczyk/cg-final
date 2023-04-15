@@ -17,4 +17,3 @@ std::shared_ptr<xMaterial> xMaterial::Default()
 		128.0f);
 	return defaultMat;
 }
- 

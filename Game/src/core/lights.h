@@ -17,6 +17,8 @@ struct PointLight
 	float constant;
 	float linear;
 	float quadratic;
+
+	//std::unique_ptr<Object> visualRepresentation; // TODO 
 };
 
 struct SpotLight
