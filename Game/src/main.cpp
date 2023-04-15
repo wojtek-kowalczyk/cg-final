@@ -94,15 +94,13 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	// TODO : add tents.
-	// TODO : add my designed mesh.
 	// TODO : add 2 animations (what can these be?)
 	// TODO : make crate, barrel and car have specular maps
-	// TODO : maybe do normal maps, if have time?
-	// TODO : allow to change to day (if have time)
 	// TODO : allow to turn the flashlight on and off 
 	// TODO : handle required acmera cwitching from drone to walk mode. (remember frone mode weird controls)
-	// TODO : add a sky box (have clouds as mesh made from primitives? There are lighting issues with that)
+	// TODO : mesh from 4 pritives...
+	// TODO : maybe do normal maps, if have time?
+	// TODO : allow to change to day (if have time)
 	// TODO : different skybox for night and day?
 
 	setupDirectionalLight(scene);
@@ -200,6 +198,14 @@ static void setupScene(Scene& scene)
 		mountains.Scale = glm::vec3(16.1f, 16.1f, 16.1f);
 		scene.MoveObject(mountains, "mountains");
 	}
+
+	{
+		Object pole = loadModel("res\\customModel\\pole.fbx");
+		pole.Position = glm::vec3(3.96f, 0.0f, 0.6f);
+		pole.Rotation = glm::vec3(-90.0f, 0.0f, -30.5f);
+		pole.Scale = glm::vec3(1.0f, 1.0f, 1.0f);
+		scene.MoveObject(pole, "pole");
+	}
 	
 	{
 		Object tents = loadModel("res\\kenney_survival-kit\\modified\\tents.fbx");
@@ -234,8 +240,8 @@ static void setupScene(Scene& scene)
 
 	{
 		Object crate = loadModel("res\\crateandbarrel\\crate_mesh.obj");
-		crate.Position = glm::vec3(1.59f, 0.0f, -2.14f);
-		crate.Rotation = glm::vec3(0.0f, -17.0f, 0.0f);
+		crate.Position = glm::vec3(1.82f, 0.0f, -1.55f);
+		crate.Rotation = glm::vec3(0.0f, 19.5f, 0.0f);
 		crate.Scale = glm::vec3(0.60f, 0.60f, 0.60f);
 		scene.MoveObject(crate, "crate");
 	}
