@@ -94,14 +94,11 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	// TODO : add light to campfire, make it flicker.
 	// TODO : add tents.
 	// TODO : add my designed mesh.
 	// TODO : add 2 animations (what can these be?)
 	// TODO : make crate, barrel and car have specular maps
 	// TODO : maybe do normal maps, if have time?
-	// TODO : add spotlights to the car, make them flicker once in a while
-	// TODO : setup the scene to be night time.
 	// TODO : allow to change to day (if have time)
 	// TODO : allow to turn the flashlight on and off 
 	// TODO : handle required acmera cwitching from drone to walk mode. (remember frone mode weird controls)
@@ -151,8 +148,11 @@ static void setupScene(Scene& scene)
 		fireLight.quadratic = 0.20f;
 		scene.AddPointLight(fireLight, "fire");
 
-		// TODO : change to yellowUnlit
-		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), whiteUnlit,
+		// TODO : make the color of this fire also change (if have time)
+		auto yellowUnlit = Shaders::plainUnlit();
+		yellowUnlit->use();
+		yellowUnlit->setVec3f("u_color", Consts::fireYellow);
+		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), yellowUnlit,
 			std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 		Object fire = loadModel("res\\kenney_survival-kit\\modified\\fire.fbx", yellowLightMaterial);
 		fire.Position = glm::vec3(2.53f, 0.0f, -1.09f);
