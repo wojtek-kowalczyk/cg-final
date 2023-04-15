@@ -44,7 +44,8 @@ static std::vector<std::string> getTextureFilepaths(aiMaterial* mat, aiTextureTy
 } 
 
 static std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>> 
-processMesh(aiMesh* mesh, const aiScene* scene, const std::string& modelPath)
+processMesh(aiMesh* mesh, const aiScene* scene, const std::string& modelPath,
+            const std::shared_ptr<xMaterial>& overrideMaterial)
 {
     struct Vertex { glm::vec3 pos; glm::vec3 normal; glm::vec2 uv; glm::vec3 color; };
     std::vector<Vertex> vertices;
@@ -107,12 +108,16 @@ processMesh(aiMesh* mesh, const aiScene* scene, const std::string& modelPath)
         {
             // paths are relative to the model
             std::string texturePath = getDirectoryFromPath(modelPath) + '\\' + path;
-            diffuseMaps.push_back(std::make_shared<Texture>(texturePath, Texture::TextureFormat::RGBA));
+            auto texture = std::make_shared<Texture>();
+            texture->loadRegularTexture(texturePath, Texture::TextureFormat::RGBA);
+            diffuseMaps.push_back(texture);
         }
         for (auto& path : specularMapPaths)
         {
             std::string texturePath = getDirectoryFromPath(modelPath) + '\\' + path;
-            specularMaps.push_back(std::make_shared<Texture>(texturePath, Texture::TextureFormat::RGBA));
+            auto texture = std::make_shared<Texture>();
+            texture->loadRegularTexture(texturePath, Texture::TextureFormat::RGBA);
+            specularMaps.push_back(texture);
         }
 
         if (diffuseMaps.size() == 0)
@@ -129,26 +134,28 @@ processMesh(aiMesh* mesh, const aiScene* scene, const std::string& modelPath)
 
     auto myMesh = std::make_shared<Mesh>((float*)vertices.data(), 
         vertices.size() * sizeof(Vertex) / sizeof(float), indices.data(), indices.size(), layout);
+
     auto myMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), Shaders::basicLit(),
         diffuseMaps, specularMaps, 128.0f);
 
-    return std::make_pair(myMesh, myMaterial);
+    return std::make_pair(myMesh, (overrideMaterial != nullptr)? overrideMaterial : myMaterial);
 }
 
 static std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> 
-processNode(aiNode* node, const aiScene* scene, const std::string& path)
+processNode(aiNode* node, const aiScene* scene, const std::string& path, 
+            const std::shared_ptr<xMaterial>& overrideMaterial)
 {
     std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> meshesAndMaterials;
 
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
         aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-        meshesAndMaterials.push_back(processMesh(mesh, scene, path));
+        meshesAndMaterials.push_back(processMesh(mesh, scene, path, overrideMaterial));
     }
 
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-        auto childMeshesAndMaterials = processNode(node->mChildren[i], scene, path);
+        auto childMeshesAndMaterials = processNode(node->mChildren[i], scene, path, overrideMaterial);
         meshesAndMaterials.insert(meshesAndMaterials.begin(), 
             childMeshesAndMaterials.begin(), childMeshesAndMaterials.end());
     }
@@ -156,7 +163,7 @@ processNode(aiNode* node, const aiScene* scene, const std::string& path)
     return meshesAndMaterials;
 }
 
-Object loadModel(std::string path)
+Object loadModel(std::string path, const std::shared_ptr<xMaterial>& overrideMaterial)
 {
     Assimp::Importer import;
     const aiScene* scene = import.ReadFile(path, aiProcess_Triangulate );
@@ -169,6 +176,6 @@ Object loadModel(std::string path)
         throw 0; // TODO : make this return invalid object? 
     }
     
-    auto meshesAndMaterials = processNode(scene->mRootNode, scene, path);
+    auto meshesAndMaterials = processNode(scene->mRootNode, scene, path, overrideMaterial);
     return Object{ meshesAndMaterials };
 }

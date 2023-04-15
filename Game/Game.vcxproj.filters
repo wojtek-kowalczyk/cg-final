@@ -1729,5 +1729,7 @@
     <None Include="lib\assimp\include\assimp\vector3.inl">
       <Filter>Header Files</Filter>
     </None>
+    <None Include="res\shaders\skybox.frag" />
+    <None Include="res\shaders\skybox.vert" />
   </ItemGroup>
 </Project>

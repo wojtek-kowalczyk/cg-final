@@ -2,6 +2,8 @@
 #include "shader.h"
 #include "../consts.h"
 #include "texture.h"
+#include "shaders.h"
+#include "primitives.h"
 
 #include <imgui/imgui.h>
 
@@ -37,6 +39,40 @@ void Scene::SetSpotLight(const SpotLight& light)
 	m_spotlight = light;
 }
 
+void Scene::SetupSkybox(const std::vector<std::string>& maps)
+{
+	auto skyboxDiffuseTex = std::make_shared<Texture>();
+	skyboxDiffuseTex->loadCubeMap(maps, Texture::TextureFormat::RGB);
+
+	auto skyboxShader = Shaders::skybox();
+	auto skyboxMaterial = std::make_shared<xMaterial>(glm::vec3(1, 1, 1), skyboxShader,
+		std::vector<std::shared_ptr<Texture>>{ skyboxDiffuseTex }, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+	m_skybox = std::make_unique<Object>(std::make_pair(Primitives::Cube(), skyboxMaterial));
+}
+
+void Scene::renderSkybox() const
+{
+	glDepthFunc(GL_LEQUAL);
+
+	auto& meshWithMat = m_skybox->m_meshesWithMaterialPtrs[0];
+	Shader& shader = *(meshWithMat.second->MainShader);
+	shader.use();
+	shader.setMat4f("u_v", glm::mat4(glm::mat3(m_camera->GetViewMatrix())));
+	shader.setMat4f("u_p", m_camera->GetProjectionMatrix());
+	//shader.setMat4f("u_m", model);
+
+	const int numDiffuseMaps = meshWithMat.second->DiffuseMaps.size();
+
+	// TODO : right now there is only support for one diffuse and one specular texture, despite material holding many
+	if (meshWithMat.second->DiffuseMaps.size() > 0)
+	{
+		meshWithMat.second->DiffuseMaps[0]->Bind(0);
+		shader.setInt("u_skybox", 0); // skybox tex is bound to slot 0.
+	}
+
+	m_renderer.Draw(*meshWithMat.first, shader);
+}
+
 void Scene::Update(GLFWwindow* window, float deltaTime)
 {
 	// These are not handled in a callback because of the delay between key press and key repeat
@@ -66,7 +102,7 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 void Scene::Render() const
 {
 	m_renderer.Clear();
-
+	
 	glm::mat4 projection = m_camera->GetProjectionMatrix();
 	glm::mat4 view = m_camera->GetViewMatrix();
 
@@ -155,6 +191,8 @@ void Scene::Render() const
 			}
 		}
 	}
+
+	renderSkybox();
 }
 
 static bool isUniforScale(glm::vec3 scale)

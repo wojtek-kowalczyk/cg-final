@@ -117,13 +117,14 @@ static void setupScene(Scene& scene)
 	
 	auto whiteUnlit = Shaders::plainUnlit();
 	whiteUnlit->use();
-	whiteUnlit->setVec3f("u_color", glm::vec3(1.0f, 1.0f, 1.0f));
+	whiteUnlit->setVec3f("u_color", Consts::fireYellow);
 
-	auto lightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), whiteUnlit, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+	auto whiteLightMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), whiteUnlit, std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 	auto defaultMat = xMaterial::Default();
 
 	{
-		auto groundDiffuseTex = std::make_shared<Texture>("res/textures/Forest-Ground.png", Texture::TextureFormat::RGB);
+		auto groundDiffuseTex = std::make_shared<Texture>();
+		groundDiffuseTex->loadRegularTexture("res/textures/Forest-Ground.png", Texture::TextureFormat::RGB);
 		auto groundSpecularTex = Texture::Black();
 		auto groundMaterial = std::make_shared<xMaterial>(glm::vec3(1.0f, 1.0f, 1.0f), basicLitShader, 
 			std::vector<std::shared_ptr<Texture>>{groundDiffuseTex},
@@ -136,7 +137,45 @@ static void setupScene(Scene& scene)
 		scene.MoveObject(ground, "ground");
 	}
 
-	{ // TODO : setup multiple trees.
+	{
+		Object campfire = loadModel("res\\kenney_survival-kit\\modified\\campfire.fbx");
+		campfire.Position = glm::vec3(2.53f, 0.0f, -1.09f);
+		campfire.Scale = glm::vec3(1.15f);
+		scene.MoveObject(campfire, "campfire");
+
+		PointLight fireLight;
+		fireLight.position = glm::vec3(2.53f, 0.0f, -1.09f);
+		fireLight.color = Consts::fireYellow;
+		// for distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
+		fireLight.constant = 0.6f; // the lower the brighter
+		fireLight.linear = 0.22f;
+		fireLight.quadratic = 0.20f;
+		scene.AddPointLight(fireLight);
+
+		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), whiteUnlit,
+			std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
+		Object fire = loadModel("res\\kenney_survival-kit\\modified\\fire.fbx", yellowLightMaterial);
+		fire.Position = glm::vec3(2.53f, 0.0f, -1.09f);
+		fire.Scale = glm::vec3(1.15f);
+		scene.MoveObject(fire, "fire");
+	}
+
+	{
+		std::vector<std::string> maps
+		{
+			"res\\textures\\skybox\\right.jpg",
+			"res\\textures\\skybox\\left.jpg",
+			"res\\textures\\skybox\\top.jpg",
+			"res\\textures\\skybox\\bottom.jpg",
+			"res\\textures\\skybox\\front.jpg",
+			"res\\textures\\skybox\\back.jpg"
+		};
+		scene.SetupSkybox(maps);
+	}
+
+	{ 
+		// TODO : setup multiple trees (in some manageable way?)
+		// TODO : make the tree not shiny
 		Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx");
 		tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
 		tree.Scale = glm::vec3(0.13f, 0.13f, 0.13f);

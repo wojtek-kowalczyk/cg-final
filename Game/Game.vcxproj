@@ -749,6 +749,8 @@
     <None Include="res\shaders\basicLit.frag" />
     <None Include="res\shaders\basic.vert" />
     <None Include="res\shaders\colorOnly.frag" />
+    <None Include="res\shaders\skybox.frag" />
+    <None Include="res\shaders\skybox.vert" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

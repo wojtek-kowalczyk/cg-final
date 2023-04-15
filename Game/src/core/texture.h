@@ -4,6 +4,7 @@
 
 #include <string>
 #include <memory>
+#include <vector>
 
 class Texture
 {
@@ -13,9 +14,18 @@ public:
 		RGB,
 		RGBA,
 	};
+	enum class TextureType
+	{
+		Invalid,
+		Regular, 
+		Cubemap,
+	};
 
-	Texture(const std::string& path, Texture::TextureFormat format);
+	Texture();
 	~Texture();
+
+	void loadRegularTexture(const std::string& path, Texture::TextureFormat format);
+	void loadCubeMap(const std::vector<std::string>& paths, Texture::TextureFormat format);
 
 	void Bind(unsigned int slot);
 	void Unbind(unsigned int slot);
@@ -27,6 +37,8 @@ public:
 private:
 	GLint GetGLEnumForTextureFormat(Texture::TextureFormat format);
 
+	TextureType m_type;
+	bool m_isInitialized;
 	unsigned int m_rendererId;
 	int m_width;
 	int m_height;

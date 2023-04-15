@@ -25,7 +25,7 @@ public:
 
 private:
 	std::vector<std::pair<std::shared_ptr<Mesh>, std::shared_ptr<xMaterial>>> m_meshesWithMaterialPtrs;
-	std::vector<std::unique_ptr<Behaviour>> m_behaviours; // I can't copy because of this. I can't copy this.
+	std::vector<std::unique_ptr<Behaviour>> m_behaviours;
 
 	friend class Scene;
 };

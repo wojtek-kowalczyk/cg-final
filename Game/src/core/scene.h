@@ -9,6 +9,7 @@
 #include <GLFW/glfw3.h>
 
 #include <vector>
+#include <string>
 #include <memory>
 #include <unordered_map>
 
@@ -24,8 +25,11 @@ public:
 	void AddPointLight(const PointLight& light);
 	void SetDirectionalLight(const DirectionalLight& light);
 	void SetSpotLight(const SpotLight& light);
+	void SetupSkybox(const std::vector<std::string>& maps);
 
 private:
+	void renderSkybox() const;
+
 	// TODO multiple camera system.
 	std::shared_ptr<Camera> m_camera; // despite camera being integral part of the scene, I need it passed from main() since glfw input callbacks. // TODO : figure this out?
 	Renderer m_renderer;
@@ -34,6 +38,7 @@ private:
 	DirectionalLight m_directionalLight;
 	SpotLight m_spotlight; // currently - flashlight. might wanna consider more.
 	glm::vec3 m_ambientLight;
+	std::unique_ptr<Object> m_skybox;
 
 	// Editor settings
 	bool m_scaleUniformly = false;
