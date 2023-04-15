@@ -7,6 +7,8 @@
 
 #include <imgui/imgui.h>
 
+#include <simplexNoise/SimplexNoise.h>
+
 #include <glm/gtc/type_ptr.hpp>
 #include "scene.h"
 
@@ -25,9 +27,10 @@ void Scene::MoveObject(Object& object, const std::string& id)
 	m_objects.insert(std::make_pair(id, std::move(object)));
 }
 
-void Scene::AddPointLight(const PointLight& light)
+void Scene::AddPointLight(const PointLight& light, const std::string& id)
 {
 	m_pointLights.push_back(light);
+	m_pointLightsLookupTable.insert(std::make_pair(id, m_pointLights.size() - 1)); // index of this point light for retireval
 }
 
 void Scene::SetDirectionalLight(const DirectionalLight& light)
@@ -79,6 +82,11 @@ void Scene::renderSkybox() const
 	m_renderer.Draw(*meshWithMat.first, shader);
 }
 
+static float lerp(float a, float b, float t)
+{
+	return a + t * (b - a);
+}
+
 void Scene::Update(GLFWwindow* window, float deltaTime)
 {
 	// These are not handled in a callback because of the delay between key press and key repeat
@@ -103,6 +111,14 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 	{
 		object.second.Update(deltaTime);
 	}
+
+	// TODO : this code is shoudn't be here but the deadline is close and I don't have time to refactor.
+	static float timer = 0.0f;
+	static const float speed = 7.0f;
+	timer += deltaTime;
+	int fireIndex = m_pointLightsLookupTable["fire"];
+	float t = (SimplexNoise::noise(timer * speed) + 1.0f) / 2.0f;
+	m_pointLights[fireIndex].constant = lerp(0.2f, 0.5f, t);
 }
 
 void Scene::Render() const

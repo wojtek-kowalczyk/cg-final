@@ -24,7 +24,7 @@ public:
 	void MoveObject(Object& object, const std::string& id); // transfers ownership to the scene
 	void AddSpotLight(const SpotLight& spotlight);
 	void AddFlashLight(const SpotLight& light);
-	void AddPointLight(const PointLight& light);
+	void AddPointLight(const PointLight& light, const std::string& id);
 	void SetDirectionalLight(const DirectionalLight& light);
 	void SetupSkybox(const std::vector<std::string>& maps);
 
@@ -41,6 +41,7 @@ private:
 	SpotLight m_flashLight; // currently - flashlight. might wanna consider more.
 	glm::vec3 m_ambientLight;
 	std::unique_ptr<Object> m_skybox;
+	std::unordered_map<std::string, unsigned int> m_pointLightsLookupTable;
 
 	// Editor settings
 	bool m_scaleUniformly = false;

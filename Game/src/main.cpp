@@ -149,7 +149,7 @@ static void setupScene(Scene& scene)
 		fireLight.constant = 0.6f; // the lower the brighter
 		fireLight.linear = 0.22f;
 		fireLight.quadratic = 0.20f;
-		scene.AddPointLight(fireLight);
+		scene.AddPointLight(fireLight, "fire");
 
 		// TODO : change to yellowUnlit
 		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), whiteUnlit,
@@ -317,7 +317,7 @@ static void setupPointLights(Scene& scene)
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-		scene.AddPointLight(light);
+		//scene.AddPointLight(light, "1");
 	}
 
 	{
@@ -328,7 +328,7 @@ static void setupPointLights(Scene& scene)
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-		scene.AddPointLight(light);
+		//scene.AddPointLight(light);
 	}
 
 	{
@@ -339,7 +339,7 @@ static void setupPointLights(Scene& scene)
 		light.constant = 0.2f;
 		light.linear = 0.09f;
 		light.quadratic = 0.032f;
-		scene.AddPointLight(light);
+		//scene.AddPointLight(light);
 	}
 }
 

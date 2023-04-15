@@ -182,6 +182,7 @@
     <ClCompile Include="lib\imgui\imgui_impl_opengl3.cpp" />
     <ClCompile Include="lib\imgui\imgui_tables.cpp" />
     <ClCompile Include="lib\imgui\imgui_widgets.cpp" />
+    <ClCompile Include="lib\simplexNoise\SimplexNoise.cpp" />
     <ClCompile Include="lib\stb_image\stb_image.cpp" />
     <ClCompile Include="src\core\camera.cpp" />
     <ClCompile Include="src\core\indexBuffer.cpp" />
@@ -579,6 +580,7 @@
     <ClInclude Include="lib\imgui\imstb_textedit.h" />
     <ClInclude Include="lib\imgui\imstb_truetype.h" />
     <ClInclude Include="lib\KHR\khrplatform.h" />
+    <ClInclude Include="lib\simplexNoise\SimplexNoise.h" />
     <ClInclude Include="lib\stb_image\stb_image.h" />
     <ClInclude Include="src\consts.h" />
     <ClInclude Include="src\core\behaviours\behaviour.h" />
