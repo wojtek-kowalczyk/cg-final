@@ -186,11 +186,19 @@ static void setupScene(Scene& scene)
 	}
 
 	{ 
-		Object tree = loadModel("res\\kenney_survival-kit\\modified\\trees.fbx");
-		tree.Position = glm::vec3(0.64f, 0.0f, 0.2f);
-		tree.Rotation = glm::vec3(-90.0f, 0.0f, 113.0f);
-		tree.Scale = glm::vec3(1.3f, 1.3f, 1.3f);
-		scene.MoveObject(tree, "tree");
+		Object trees = loadModel("res\\kenney_survival-kit\\modified\\trees.fbx");
+		trees.Position = glm::vec3(0.64f, 0.0f, 0.2f);
+		trees.Rotation = glm::vec3(-90.0f, 0.0f, 113.0f);
+		trees.Scale = glm::vec3(1.3f, 1.3f, 1.3f);
+		scene.MoveObject(trees, "trees");
+	}
+
+	{
+		Object mountains = loadModel("res\\kenney_survival-kit\\modified\\mountains.fbx");
+		mountains.Position = glm::vec3(0.64f, 0.0f, 0.2f);
+		mountains.Rotation = glm::vec3(0.0f, 112.0f, 0.0f);
+		mountains.Scale = glm::vec3(16.1f, 16.1f, 16.1f);
+		scene.MoveObject(mountains, "mountains");
 	}
 
 	{
