@@ -95,7 +95,6 @@ int main()
 static void setupScene(Scene& scene)
 {
 	// TODO : add 2 animations (what can these be?)
-	// TODO : make crate, barrel and car have specular maps
 	// TODO : allow to turn the flashlight on and off 
 	// TODO : handle required acmera cwitching from drone to walk mode. (remember frone mode weird controls)
 	// TODO : mesh from 4 pritives...
