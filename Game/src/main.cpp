@@ -186,11 +186,10 @@ static void setupScene(Scene& scene)
 	}
 
 	{ 
-		// TODO : setup multiple trees (in some manageable way?)
-		// TODO : make the tree not shiny
-		Object tree = loadModel("res\\kenney_survival-kit\\Models\\FBX format\\tree.fbx");
-		tree.Position = glm::vec3(2.0f, 0.0f, -2.0f);
-		tree.Scale = glm::vec3(0.13f, 0.13f, 0.13f);
+		Object tree = loadModel("res\\kenney_survival-kit\\modified\\trees.fbx");
+		tree.Position = glm::vec3(0.64f, 0.0f, 0.2f);
+		tree.Rotation = glm::vec3(-90.0f, 0.0f, 113.0f);
+		tree.Scale = glm::vec3(1.3f, 1.3f, 1.3f);
 		scene.MoveObject(tree, "tree");
 	}
 
