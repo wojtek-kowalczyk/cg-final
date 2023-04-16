@@ -100,11 +100,24 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Right, deltaTime);
 
-	bool isWalkMode = m_camera->mode() == Camera::Mode::Walk;
+	bool isWalkMode = m_camera->Mode == Camera::Mode::Walk;
 	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && !isWalkMode)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Down, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && !isWalkMode)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Up, deltaTime);
+
+	if (m_camera->Mode == Camera::Mode::Drone)
+	{
+		// Handle IJKL movement
+		if (glfwGetKey(window, GLFW_KEY_I) == GLFW_PRESS)
+			m_camera->ProcessMouseMovement(0.0f, 1.0f);
+		if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+			m_camera->ProcessMouseMovement(-1.0f, 0.0f);
+		if (glfwGetKey(window, GLFW_KEY_K) == GLFW_PRESS)
+			m_camera->ProcessMouseMovement(0.0f, -1.0f);
+		if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+			m_camera->ProcessMouseMovement(1.0f, 0.0f);
+	}
 
 	if (isWalkMode)
 	{

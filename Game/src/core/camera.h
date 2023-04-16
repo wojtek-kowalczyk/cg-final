@@ -51,6 +51,7 @@ public:
 
     bool WantsJump = false; // This odesn't belong here, but again, time...
     bool CanJump = true;
+    Mode Mode = Mode::Drone;
 
     Camera(glm::vec3 position = glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3 up = glm::vec3(0.0f, 1.0f, 0.0f), float yaw = YAW, float pitch = PITCH);
     // TODO : The processing methods shouldn't be here I think. They should be in a class that controls the camera. 
@@ -65,11 +66,8 @@ public:
     void Unlock();
 
     bool IsLocked() const { return m_allowMovement == false; }
-    Mode mode() const { return m_mode; }
 
 private:
     void updateCameraVectors();
-
     bool m_allowMovement = true;
-    Mode m_mode = Mode::Walk;
 };

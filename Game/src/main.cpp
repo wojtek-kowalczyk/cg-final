@@ -47,10 +47,12 @@ static void setupScene(Scene& scene);
 static void setupDirectionalLight(Scene& scene);
 static void setupSpotlights(Scene& scene);
 static void setupPointLights(Scene& scene);
+static void setCameraDefaults();
 
 // TODO : maybe put the camera entirely in a scene?
 // TODO : this has to be global for callbacks? Figure out a way to not do that
 std::shared_ptr<Camera> mainCamera;
+static Camera lastWalkModeCameraState;
 
 int main()
 {
@@ -59,8 +61,8 @@ int main()
 	initImGui(window);
 
 	mainCamera = std::make_shared<Camera>();
-	mainCamera->Position = glm::vec3(3.0f, 3.0f, 3.0f);
-	mainCamera->LookAt(glm::vec3(0.0f, 0.0f, 0.0f));
+	setCameraDefaults();
+	lastWalkModeCameraState = *mainCamera;
 
 	Scene scene{ mainCamera };
 	setupScene(scene);
@@ -533,6 +535,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	if (key == GLFW_KEY_V && action == GLFW_PRESS)
 	{
 		// switch camera mode
+		if (mainCamera->Mode == Camera::Mode::Walk)
+		{
+			lastWalkModeCameraState = *mainCamera;
+			mainCamera->Mode = Camera::Mode::Drone;
+			setCameraDefaults();
+		}
+		else
+		{
+			*mainCamera = lastWalkModeCameraState;
+			mainCamera->Mode = Camera::Mode::Walk;
+		}
 	}
 
 	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
@@ -563,7 +576,9 @@ static void mouse_callback(GLFWwindow* window, double xposIn, double yposIn)
 	lastX = xpos;
 	lastY = ypos;
 
-	mainCamera->ProcessMouseMovement(xoffset, yoffset); // how do I pass camera to this function, when I can't modify its interface?
+	// how do I pass camera to this (as in the enclosing, the one called here)
+	// function, when I can't modify its interface?
+	mainCamera->ProcessMouseMovement(xoffset, yoffset); 
 }
 
 static void scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
@@ -581,4 +596,10 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action, in
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		mainCamera->Unlock();
 	}
+}
+
+static void setCameraDefaults()
+{
+	mainCamera->Position = glm::vec3(5.0f, 3.0f, 3.0f);
+	mainCamera->LookAt(glm::vec3(2.0f, 0.0f, 0.0f));
 }

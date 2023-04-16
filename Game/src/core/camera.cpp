@@ -49,7 +49,7 @@ void Camera::ProcessKeyboard(MovementDirection direction, float deltaTime)
 		return;
 
 	glm::vec3 forward = Forward;
-	if (m_mode == Mode::Walk)
+	if (Mode == Mode::Walk)
 		forward.y = 0.0f;
 
 	float velocity = MovementSpeed * deltaTime;
