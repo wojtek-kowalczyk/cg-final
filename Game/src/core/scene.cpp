@@ -119,9 +119,19 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 			m_camera->ProcessMouseMovement(1.0f, 0.0f);
 	}
 
+	// flashlight
+	if (m_camera->Mode == Camera::Mode::Drone)
+	{
+		m_flashLight.color = glm::vec3(0,0,0);
+	}
+	else
+	{
+		m_flashLight.color = glm::vec3(1,1,1);
+	}
+
+	// Jumping
 	if (isWalkMode)
 	{
-		// Jumping 
 		static const float gravity = -9.81f;
 		static float forceY = 0.0f;
 		
@@ -161,6 +171,8 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 	int fireIndex = m_pointLightsLookupTable["fire"];
 	float t = (SimplexNoise::noise(timer * speed) + 1.0f) / 2.0f;
 	m_pointLights[fireIndex].constant = lerp(0.2f, 0.5f, t);
+
+
 }
 
 void Scene::Render() const
@@ -201,10 +213,10 @@ void Scene::Render() const
 				shader.setFloat(buffer, m_pointLights[i].quadratic);
 			}
 
-			shader.setInt("u_numSpotLights", m_spotLights.size());
-			for (int i = 0; i < m_spotLights.size(); i++)
+			shader.setInt("u_numSpotLights", m_spotLights.size() + 1); // +1 for flashlight
+			for (int i = 0; i < m_spotLights.size() + 1; i++)
 			{
-				const SpotLight& spotLight = m_spotLights[i];
+				const SpotLight& spotLight = (i == m_spotLights.size()) ? m_flashLight : m_spotLights[i];
 
 				sprintf_s(buffer, "u_spotLights[%d].position", i);
 				shader.setVec3f(buffer, spotLight.position);

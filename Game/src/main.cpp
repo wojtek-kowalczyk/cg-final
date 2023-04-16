@@ -91,7 +91,6 @@ static void setupScene(Scene& scene)
 {
 	// TODO : add 2 animations (what can these be?)
 	// TODO : allow to turn the flashlight on and off 
-	// TODO : handle required acmera cwitching from drone to walk mode. (remember frone mode weird controls)
 	// TODO : mesh from 4 pritives...
 	// TODO : maybe do normal maps, if have time?
 	// TODO : allow to change to day (if have time)
@@ -278,7 +277,7 @@ static void setupSpotlights(Scene& scene)
 		flashLight.quadratic = 0.032f;
 		flashLight.cutOff = glm::cos(glm::radians(12.5f));
 		flashLight.outerCutOff = glm::cos(glm::radians(15.0f));
-		//scene.MoveFlashLight(flashLight);
+		scene.AddFlashLight(flashLight);
 	}
 
 	auto whiteUnlit = Shaders::plainUnlit();
