@@ -48,11 +48,15 @@ void Camera::ProcessKeyboard(MovementDirection direction, float deltaTime)
 	if (m_allowMovement == false)
 		return;
 
+	glm::vec3 forward = Forward;
+	if (m_mode == Mode::Walk)
+		forward.y = 0.0f;
+
 	float velocity = MovementSpeed * deltaTime;
 	if (direction == MovementDirection::Forward)
-		Position += Forward * velocity;
+		Position += forward * velocity;
 	if (direction == MovementDirection::Backward)
-		Position -= Forward * velocity;
+		Position -= forward * velocity;
 	if (direction == MovementDirection::Left)
 		Position -= Right * velocity;
 	if (direction == MovementDirection::Right)

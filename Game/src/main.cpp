@@ -32,12 +32,6 @@
 
 #include <iostream>
 
-// TODO handle single and multi mech objects as parts of the same object
-
-// links to models:
-// https://free3d.com/3d-model/abandoned-cottage-house-825251.htmlstatic 
-// https://www.kenney.nl/assets/survival-kit
-
 void onWindowResized(GLFWwindow* window, int width, int height);
 static void printDebugMessage(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar* message, const void* userParam);
 static bool initWindow(GLFWwindow** window);
@@ -56,7 +50,6 @@ static void setupPointLights(Scene& scene);
 
 // TODO : maybe put the camera entirely in a scene?
 // TODO : this has to be global for callbacks? Figure out a way to not do that
-// TODO : watch a video on smart pointers (vs regualr pointers, mind global camera shared ptr. make it unique? what would that mean?)
 std::shared_ptr<Camera> mainCamera;
 
 int main()
@@ -535,6 +528,17 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			mainCamera->Lock();
 		}
+	}
+
+	if (key == GLFW_KEY_V && action == GLFW_PRESS)
+	{
+		// switch camera mode
+	}
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
+	{
+		// buffer jump
+		mainCamera->WantsJump = true;
 	}
 }
 

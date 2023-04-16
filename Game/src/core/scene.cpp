@@ -99,10 +99,39 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Left, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Right, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS)
+
+	bool isWalkMode = m_camera->mode() == Camera::Mode::Walk;
+	if (glfwGetKey(window, GLFW_KEY_Q) == GLFW_PRESS && !isWalkMode)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Down, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS)
+	if (glfwGetKey(window, GLFW_KEY_E) == GLFW_PRESS && !isWalkMode)
 		m_camera->ProcessKeyboard(Camera::MovementDirection::Up, deltaTime);
+
+	if (isWalkMode)
+	{
+		// Jumping 
+		static const float gravity = -9.81f;
+		static float forceY = 0.0f;
+		
+		forceY += gravity * deltaTime;
+		
+		if (m_camera->CanJump && m_camera->WantsJump)
+		{
+			forceY += 12.0f;
+			m_camera->WantsJump = false;
+			m_camera->CanJump = false;
+		}
+		
+		m_camera->Position.y += forceY * deltaTime;
+
+		static const float minpos = 0.6f;
+		if (m_camera->Position.y <= minpos)
+		{
+			forceY = gravity;
+			m_camera->Position.y = minpos;
+			m_camera->CanJump = true;
+			m_camera->WantsJump = false;
+		}
+	}
 
 	m_flashLight.position = m_camera->Position;
 	m_flashLight.direction = m_camera->Forward;
