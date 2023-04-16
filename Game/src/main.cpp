@@ -46,7 +46,6 @@ static void mouse_button_callback(GLFWwindow* window, int button, int action, in
 static void setupScene(Scene& scene);
 static void setupDirectionalLight(Scene& scene);
 static void setupSpotlights(Scene& scene);
-static void setupPointLights(Scene& scene);
 static void setCameraDefaults();
 
 static Camera lastWalkModeCameraState;
@@ -90,15 +89,8 @@ int main()
 
 static void setupScene(Scene& scene)
 {
-	// TODO : add 2 animations (what can these be?)
-	// TODO : mesh from 4 pritives...
-	// TODO : maybe do normal maps, if have time?
-	// TODO : allow to change to day (if have time)
-	// TODO : different skybox for night and day?
-
 	setupDirectionalLight(scene);
 	setupSpotlights(scene);
-	//setupPointLights(scene);
 
 	auto basicLitShader = Shaders::basicLit();
 	
@@ -247,16 +239,19 @@ static void setupScene(Scene& scene)
 		scene.MoveObject(jeep, "jeep");
 	}
 
-	// TODO : find a different way to handle object composed of 4 primitives.
-	// TODO : revisit if have time
-	//Object bushFromPrimitives{ std::vector{
-	//	//std::make_pair(Primitives::Sphere(glm::vec3(0.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat),
-	//	//std::make_pair(Primitives::Sphere(glm::vec3(1.2,0.3,0.0), glm::vec3(0.6,0.6,0.6)), defaultMat),
-	//	//std::make_pair(Primitives::Sphere(glm::vec3(0.7,0.1,0.4), glm::vec3(0.6,0.6,0.6)), defaultMat),
-	//	
-	//	// this is darker for some reason? if further from origin, the mesh appears darker? normals issue?
-	//	std::make_pair(Primitives::Sphere(glm::vec3(6.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
-	//}};
+	{ 
+		// When I make an object of many meshes the lighting on them is awkward.
+		// I leave it here to satisfy the requirement of an obejct made out of 4 primitve meshes,
+		// But I put it inside the cabin, so you have to "go" inside if you wanna see them.
+		Object tmpFromPrimiteives{ std::vector{
+			std::make_pair(Primitives::Sphere(glm::vec3(0.0,0.0,1.0), glm::vec3(1.0,1.0,1.0)), defaultMat),
+			std::make_pair(Primitives::Sphere(glm::vec3(1.2,0.3,0.0), glm::vec3(0.6,0.6,0.6)), defaultMat),
+			std::make_pair(Primitives::Cube(), defaultMat),
+			std::make_pair(Primitives::Sphere(glm::vec3(2.0,0.0,0.0), glm::vec3(1.0,1.0,1.0)), defaultMat), 
+		}};
+		tmpFromPrimiteives.Scale = glm::vec3(0.2, 0.2, 0.2);
+		scene.MoveObject(tmpFromPrimiteives, "primitives");
+	}
 }
 
 static void setupDirectionalLight(Scene& scene)
@@ -321,42 +316,6 @@ static void setupSpotlights(Scene& scene)
 	}
 }
 
-static void setupPointLights(Scene& scene)
-{
-	{
-		PointLight light;
-		light.position = glm::vec3(2.0f, 0.25f, 2.0f);
-		light.color = glm::vec3(1.0f, 1.0f, 1.0f) * 0.4f;
-		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
-		light.constant = 0.2f;
-		light.linear = 0.09f;
-		light.quadratic = 0.032f;
-		//scene.AddPointLight(light, "1");
-	}
-
-	{
-		PointLight light;
-		light.position = glm::vec3(-3.0f, 0.5f, 1.0f);
-		light.color = glm::vec3(0.0f, 0.0f, 1.0f) * 0.3f;
-		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
-		light.constant = 0.2f;
-		light.linear = 0.09f;
-		light.quadratic = 0.032f;
-		//scene.AddPointLight(light);
-	}
-
-	{
-		PointLight light;
-		light.position = glm::vec3(+1.5f, 0.35f, -1.0f);
-		light.color = glm::vec3(0.0f, 1.0f, 0.0f) * 0.3f;
-		// this cover the distance of 50. for other distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
-		light.constant = 0.2f;
-		light.linear = 0.09f;
-		light.quadratic = 0.032f;
-		//scene.AddPointLight(light);
-	}
-}
-
 static void cleanupWindow(GLFWwindow* window)
 {
 	glfwDestroyWindow(window);
@@ -377,13 +336,26 @@ static void imguiRender(Scene& scene, float deltaTime) // no const ref cuz ImGui
 	ImGui_ImplGlfw_NewFrame();
 	ImGui::NewFrame();
 
-	ImGui::Begin("CG Final GUI");
+	ImGui::Begin("Scene Editor");
 	{
 		ImGui::SetWindowFontScale(2.0f);
 		auto& io = ImGui::GetIO();
 		ImGui::Text("Frame avg: %.3f ms/frame (%.1f FPS)", 1000.0f / io.Framerate, io.Framerate); // rolling average
 	
 		scene.OnImGuiRender();
+	}
+	ImGui::End();
+
+	ImGui::Begin("Info");
+	{
+		ImGui::Text("Welcome to \"The Cabin in the Woods\"");
+		ImGui::Text("Controls:");
+		ImGui::Text("WSAD - move");
+		ImGui::Text("IJKL - look around (drone mode only)");
+		ImGui::Text("Mouse - look around (both drone mode and walk mode)");
+		ImGui::Text("V - toggle camera modes");
+		ImGui::Text("Space - jump (walk mode only)");
+		ImGui::Text("Enter - enter rave mode (animation showcase)");
 	}
 	ImGui::End();
 
