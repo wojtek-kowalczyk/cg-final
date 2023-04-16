@@ -49,10 +49,11 @@ static void setupSpotlights(Scene& scene);
 static void setupPointLights(Scene& scene);
 static void setCameraDefaults();
 
-// TODO : maybe put the camera entirely in a scene?
-// TODO : this has to be global for callbacks? Figure out a way to not do that
-std::shared_ptr<Camera> mainCamera;
 static Camera lastWalkModeCameraState;
+
+// TODO : these are global for GLFW input callbacks? Figure out a way to not do that
+std::shared_ptr<Camera> mainCamera;
+Scene* scene;
 
 int main()
 {
@@ -64,8 +65,8 @@ int main()
 	setCameraDefaults();
 	lastWalkModeCameraState = *mainCamera;
 
-	Scene scene{ mainCamera };
-	setupScene(scene);
+	scene = new Scene(mainCamera);
+	setupScene(*scene);
 	
 	Timer frameTimer{};
 
@@ -74,9 +75,9 @@ int main()
 		float deltaTime = frameTimer.Poll();
 		frameTimer.Start();
 
-		scene.Update(window, deltaTime);
-		scene.Render();
-		imguiRender(scene, deltaTime); 
+		scene->Update(window, deltaTime);
+		scene->Render();
+		imguiRender(*scene, deltaTime); 
 
 		glfwSwapBuffers(window);
 		glfwPollEvents();
@@ -90,7 +91,6 @@ int main()
 static void setupScene(Scene& scene)
 {
 	// TODO : add 2 animations (what can these be?)
-	// TODO : allow to turn the flashlight on and off 
 	// TODO : mesh from 4 pritives...
 	// TODO : maybe do normal maps, if have time?
 	// TODO : allow to change to day (if have time)
@@ -132,7 +132,7 @@ static void setupScene(Scene& scene)
 
 		PointLight fireLight;
 		fireLight.position = glm::vec3(2.53f, 0.0f, -1.09f);
-		fireLight.color = Consts::fireYellow;
+		fireLight.color = Consts::FIRE_YELLOW;
 		// for distances see https://wiki.ogre3d.org/tiki-index.php?page=-Point+Light+Attenuation
 		fireLight.constant = 0.6f; // the lower the brighter
 		fireLight.linear = 0.22f;
@@ -142,7 +142,7 @@ static void setupScene(Scene& scene)
 		// TODO : make the color of this fire also change (if have time)
 		auto yellowUnlit = Shaders::plainUnlit();
 		yellowUnlit->use();
-		yellowUnlit->setVec3f("u_color", Consts::fireYellow);
+		yellowUnlit->setVec3f("u_color", Consts::FIRE_YELLOW);
 		auto yellowLightMaterial = std::make_shared<xMaterial>(glm::vec3(/*doesn't matter*/), yellowUnlit,
 			std::vector<std::shared_ptr<Texture>>{}, std::vector<std::shared_ptr<Texture>>{}, 0.0f);
 		Object fire = loadModel("res\\kenney_survival-kit\\modified\\fire.fbx", yellowLightMaterial);
@@ -551,6 +551,11 @@ static void key_callback(GLFWwindow* window, int key, int scancode, int action, 
 	{
 		// buffer jump
 		mainCamera->WantsJump = true;
+	}
+
+	if (key == GLFW_KEY_ENTER && action == GLFW_PRESS)
+	{
+		scene->RaveMode = !scene->RaveMode;
 	}
 }
 

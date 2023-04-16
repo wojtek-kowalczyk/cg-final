@@ -16,9 +16,11 @@
 class Scene
 {
 public:
+	Scene() = default;
 	Scene(const std::shared_ptr<Camera>& camera);
 
 	void Update(GLFWwindow* window, float deltaTime);
+	void HandleRaveMode(float timer);
 	void Render() const;
 	void OnImGuiRender();
 	void MoveObject(Object& object, const std::string& id); // transfers ownership to the scene
@@ -28,8 +30,13 @@ public:
 	void SetDirectionalLight(const DirectionalLight& light);
 	void SetupSkybox(const std::vector<std::string>& maps);
 
+	bool RaveMode = false;
+
 private:
 	void renderSkybox() const;
+	void updateFlashLight();
+	void updateCamera(GLFWwindow* window, float deltaTime);
+	void handleJumping(bool isWalkMode, float deltaTime);
 
 	// TODO multiple camera system.
 	std::shared_ptr<Camera> m_camera; // despite camera being integral part of the scene, I need it passed from main() since glfw input callbacks. // TODO : figure this out?

@@ -89,6 +89,82 @@ static float lerp(float a, float b, float t)
 
 void Scene::Update(GLFWwindow* window, float deltaTime)
 {
+	updateCamera(window, deltaTime);
+	updateFlashLight();
+	
+	static float timer = 0.0f;
+	timer += deltaTime;
+
+	HandleRaveMode(timer);
+
+	for (auto& object : m_objects)
+	{
+		object.second.Update(deltaTime);
+	}
+
+	// TODO : this code is shoudn't be here but the deadline is close and I don't have time to refactor.
+	// Fire flickering
+	if (!RaveMode)
+	{
+		static const float speed = 7.0f;
+		int fireIndex = m_pointLightsLookupTable["fire"];
+		float t = (SimplexNoise::noise(timer * speed) + 1.0f) / 2.0f;
+		m_pointLights[fireIndex].constant = lerp(0.2f, 0.5f, t);
+		m_pointLights[fireIndex].color = Consts::FIRE_YELLOW;
+	}
+}
+
+void Scene::HandleRaveMode(float timer)
+{
+	Object* trees = &m_objects.find("trees").operator*().second;
+	Object* cabin = &m_objects.find("cabin").operator*().second;
+	Object* tents = &m_objects.find("tents").operator*().second;
+	Object* pole = &m_objects.find("pole").operator*().second;
+	static float treesScaleZ = trees->Scale.z; // Z is vertical for trees actually
+	static float cabinYPos = cabin->Position.y;
+	static float jeepRotationY = tents->Rotation.y;
+	static float poleRotationY = pole->Rotation.y;
+	if (RaveMode)
+	{
+		float t = (sinf(timer * 10.0f) + 1.0f) / 2.0f;
+		trees->Scale.z = lerp(0.9f, 1.3f, t);
+		cabin->Position.y = lerp(0.0f, 1.33f, t);
+		tents->Rotation.y = timer * 300.0f;
+		pole->Rotation.y = lerp(-45.0f, 90.0f, t / 2.0f);
+
+		static const float speed = 12.0f;
+		int fireIndex = m_pointLightsLookupTable["fire"];
+		float tnoise = (SimplexNoise::noise(timer * speed) + 1.0f) / 2.0f;
+		m_pointLights[fireIndex].constant = lerp(0.1f, 0.6f, tnoise);
+		m_pointLights[fireIndex].color = glm::vec3(SimplexNoise::noise(t * 1.33f),
+			SimplexNoise::noise(t * 0.667f), SimplexNoise::noise(t * 2.17f));
+	}
+	else
+	{
+		trees->Scale.z = treesScaleZ;
+		cabin->Position.y = cabinYPos;
+		tents->Rotation.y = jeepRotationY;
+		pole->Rotation.y = poleRotationY;
+	}
+}
+
+void Scene::updateFlashLight()
+{
+	if (m_camera->Mode == Camera::Mode::Drone)
+	{
+		m_flashLight.color = glm::vec3(0, 0, 0);
+	}
+	else
+	{
+		m_flashLight.color = glm::vec3(1, 1, 1);
+	}
+
+	m_flashLight.position = m_camera->Position;
+	m_flashLight.direction = m_camera->Forward;
+}
+
+void Scene::updateCamera(GLFWwindow* window, float deltaTime)
+{
 	// These are not handled in a callback because of the delay between key press and key repeat
 
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
@@ -119,31 +195,25 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 			m_camera->ProcessMouseMovement(1.0f, 0.0f);
 	}
 
-	// flashlight
-	if (m_camera->Mode == Camera::Mode::Drone)
-	{
-		m_flashLight.color = glm::vec3(0,0,0);
-	}
-	else
-	{
-		m_flashLight.color = glm::vec3(1,1,1);
-	}
+	handleJumping(isWalkMode, deltaTime);
+}
 
-	// Jumping
+void Scene::handleJumping(bool isWalkMode, float deltaTime)
+{
 	if (isWalkMode)
 	{
 		static const float gravity = -9.81f;
 		static float forceY = 0.0f;
-		
+
 		forceY += gravity * deltaTime;
-		
+
 		if (m_camera->CanJump && m_camera->WantsJump)
 		{
 			forceY += 12.0f;
 			m_camera->WantsJump = false;
 			m_camera->CanJump = false;
 		}
-		
+
 		m_camera->Position.y += forceY * deltaTime;
 
 		static const float minpos = 0.6f;
@@ -155,24 +225,6 @@ void Scene::Update(GLFWwindow* window, float deltaTime)
 			m_camera->WantsJump = false;
 		}
 	}
-
-	m_flashLight.position = m_camera->Position;
-	m_flashLight.direction = m_camera->Forward;
-
-	for (auto& object : m_objects)
-	{
-		object.second.Update(deltaTime);
-	}
-
-	// TODO : this code is shoudn't be here but the deadline is close and I don't have time to refactor.
-	static float timer = 0.0f;
-	static const float speed = 7.0f;
-	timer += deltaTime;
-	int fireIndex = m_pointLightsLookupTable["fire"];
-	float t = (SimplexNoise::noise(timer * speed) + 1.0f) / 2.0f;
-	m_pointLights[fireIndex].constant = lerp(0.2f, 0.5f, t);
-
-
 }
 
 void Scene::Render() const

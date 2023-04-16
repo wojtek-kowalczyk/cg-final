@@ -13,5 +13,5 @@ namespace Consts
 
 	inline constexpr float IMGUI_UI_SCALE{ 2.0f };
 
-	inline constexpr glm::vec3 fireYellow{ glm::vec3(255.0f / 255.0f, 253.0f / 255.0f, 153.0f / 255.0f) };
+	inline constexpr glm::vec3 FIRE_YELLOW{ glm::vec3(255.0f / 255.0f, 253.0f / 255.0f, 153.0f / 255.0f) };
 }
