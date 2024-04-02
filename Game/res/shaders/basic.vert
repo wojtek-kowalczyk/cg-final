@@ -14,6 +14,7 @@ out vec3 FragmentPosInWorldSpace;
 out vec3 Normal;
 out vec2 UV;
 out vec3 Color;
+out vec4 gl_Position;
 
 void main()
 {

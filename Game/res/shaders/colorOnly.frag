@@ -1,8 +1,9 @@
 #version 430 core
 
 uniform vec3 u_color;
+out vec4 fragColor;
 
 void main()
 {
-    gl_FragColor = vec4(u_color, 1.0);
+    fragColor = vec4(u_color, 1.0);
 }

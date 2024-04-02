@@ -68,6 +68,8 @@ vec3 CalculateDirectionalLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 viewDir); 
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 viewDir);
 
+out vec4 outColor;
+
 void main()
 {
     vec3 outputColor = vec3(0.0);
@@ -93,7 +95,7 @@ void main()
     outputColor *= u_mat.albedo;
     outputColor *= Color;
 
-    gl_FragColor = vec4(outputColor, 1.0);
+    outColor = vec4(outputColor, 1.0);
 }
 
 // TODO : get rid of duplicated code in these functions
